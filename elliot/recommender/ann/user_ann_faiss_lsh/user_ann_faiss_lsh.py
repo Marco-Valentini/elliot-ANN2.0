@@ -1,0 +1,4 @@
+
+
+class UserANNfaissLSH:
+    pass

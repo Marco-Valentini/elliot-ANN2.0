@@ -2,7 +2,8 @@ import pickle
 
 import numpy as np
 from scipy import sparse
-from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances, haversine_distances, chi2_kernel, manhattan_distances
+from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances, haversine_distances, chi2_kernel, \
+    manhattan_distances
 from sklearn.metrics import pairwise_distances
 from sklearn.preprocessing import normalize
 
@@ -20,24 +21,28 @@ class Similarity(object):
         self._implicit = implicit
 
         if self._implicit:
-            self._URM = self._data.sp_i_train
+            self._URM = self._data.sp_i_train  # this stores the interactions
         else:
-            self._URM = self._data.sp_i_train_ratings
+            self._URM = self._data.sp_i_train_ratings  # this stores the ratings
 
-        self._users = self._data.users
-        self._items = self._data.items
-        self._private_users = self._data.private_users
-        self._public_users = self._data.public_users
-        self._private_items = self._data.private_items
-        self._public_items = self._data.public_items
+        self._users = self._data.users  # contains a list of userIDs
+        self._items = self._data.items  # contains a list of itemIDs
+        self._private_users = self._data.private_users  # contains the mapping from private ID to public ID
+        self._public_users = self._data.public_users  # contains the mapping from public ID to private ID
+        self._private_items = self._data.private_items  # contains the mapping from private ID to public ID
+        self._public_items = self._data.public_items  # contains the mapping from public ID to private ID
 
     def initialize(self):
         """
-        This function initialize the data model
+        This function initialize the data model -> create the LSH index
         """
 
-        self.supported_similarities = ["cosine", "dot", ]
-        self.supported_dissimilarities = ["euclidean", "manhattan", "haversine",  "chi2", 'cityblock', 'l1', 'l2', 'braycurtis', 'canberra', 'chebyshev', 'correlation', 'dice', 'hamming', 'jaccard', 'kulsinski', 'mahalanobis', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean', 'yule']
+        self.supported_similarities = ["cosine", "dot"]
+        self.supported_dissimilarities = ["euclidean", "manhattan", "haversine", "chi2", 'cityblock', 'l1', 'l2',
+                                          'braycurtis', 'canberra', 'chebyshev', 'correlation', 'dice', 'hamming',
+                                          'jaccard', 'kulsinski', 'mahalanobis', 'minkowski', 'rogerstanimoto',
+                                          'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean',
+                                          'yule']
         print(f"\nSupported Similarities: {self.supported_similarities}")
         print(f"Supported Distances/Dissimilarities: {self.supported_dissimilarities}\n")
 
@@ -109,7 +114,9 @@ class Similarity(object):
             self._similarity_matrix = (1 / (1 + chi2_kernel(self._URM.T)))
         elif similarity in ['cityblock', 'l1', 'l2']:
             self._similarity_matrix = (1 / (1 + pairwise_distances(self._URM.T, metric=similarity)))
-        elif similarity in ['braycurtis', 'canberra', 'chebyshev', 'correlation', 'dice', 'hamming', 'jaccard', 'kulsinski', 'mahalanobis', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean', 'yule']:
+        elif similarity in ['braycurtis', 'canberra', 'chebyshev', 'correlation', 'dice', 'hamming', 'jaccard',
+                            'kulsinski', 'mahalanobis', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean',
+                            'sokalmichener', 'sokalsneath', 'sqeuclidean', 'yule']:
 
             self._similarity_matrix = (1 / (1 + pairwise_distances(self._URM.T.toarray(), metric=similarity)))
         else:
@@ -161,7 +168,7 @@ class Similarity(object):
         user_recs_mask = mask[user_id]
         user_recs[~user_recs_mask] = -np.inf
         indices, values = zip(*[(self._data.private_items.get(u_list[0]), u_list[1])
-                              for u_list in enumerate(user_recs)])
+                                for u_list in enumerate(user_recs)])
 
         # indices, values = zip(*predictions.items())
         indices = np.array(indices)
