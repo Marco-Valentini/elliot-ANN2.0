@@ -1,2 +1,2 @@
 
-from item_ann_faiss_lsh import ItemANNfaissLSH
+from .item_ann_faiss_lsh import ItemANNfaissLSH

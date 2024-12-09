@@ -34,53 +34,74 @@ experiment:
 #        verbose: False
 #        save_recs: False
 #        validation_metric: nDCG@10
-#      neighbors: [50, 70, 100]
-#      similarity: [cosine, euclidean]
+#      neighbors: 40
+#      similarity: cosine
 #      implementation: standard
-    ItemFairANN:
+#    UserKNN:
+#      meta:
+#        verbose: False
+#        save_recs: False
+#        validation_metric: nDCG@10
+#      neighbors: 40
+#      similarity: cosine
+#      implementation: standard
+#    ItemFairANN:
+#      meta:
+#        verbose: True
+#        save_recs: False
+#        validation_metric: nDCG@10
+#      neighbors: 50
+#      similarity: cosine
+#      sampling_strategy: uniform
+#      validate: False
+#      n_hash: 3
+#      n_tables: 5
+#      similarity_threshold: 0.3
+#    UserFairANN:
+#      meta:
+#        verbose: True
+#        save_recs: False
+#        validation_metric: nDCG@10
+#      neighbors: 50
+#      similarity: cosine
+#      sampling_strategy: uniform
+#      validate: False
+#      n_hash: 3
+#      n_tables: 5
+#      similarity_threshold: 0.3
+#    ItemANNLSH:
+#      meta:
+#        verbose: True
+#        save_recs: False
+#        validation_metric: nDCG@10
+#      neighbors: 50
+#      similarity: cosine
+#      validate: False
+#      n_hash: 3
+#      n_tables: 5
+#      similarity_threshold: 0.3
+#    UserANNLSH:
+#      meta:
+#        verbose: True
+#        save_recs: False
+#        validation_metric: nDCG@10
+#      neighbors: 50
+#      similarity: cosine
+#      validate: False
+#      n_hash: 3
+#      n_tables: 5
+#      similarity_threshold: 0.3
+#    ItemANNfaissLSH:
+#      meta:
+#        verbose: True
+#        save_recs: False
+#      neighbors: 40
+#      similarity: cosine
+#      nbits: 3
+    UserANNfaissLSH:
       meta:
         verbose: True
         save_recs: False
-        validation_metric: nDCG@10
-      neighbors: 50
+      neighbors: 40
       similarity: cosine
-      sampling_strategy: uniform
-      validate: False
-      n_hash: 3
-      n_tables: 5
-      similarity_threshold: 0.3
-    UserFairANN:
-      meta:
-        verbose: True
-        save_recs: False
-        validation_metric: nDCG@10
-      neighbors: 50
-      similarity: cosine
-      sampling_strategy: uniform
-      validate: False
-      n_hash: 3
-      n_tables: 5
-      similarity_threshold: 0.3
-    ItemANNLSH:
-      meta:
-        verbose: True
-        save_recs: False
-        validation_metric: nDCG@10
-      neighbors: 50
-      similarity: cosine
-      validate: False
-      n_hash: 3
-      n_tables: 5
-      similarity_threshold: 0.3
-    UserANNLSH:
-      meta:
-        verbose: True
-        save_recs: False
-        validation_metric: nDCG@10
-      neighbors: 50
-      similarity: cosine
-      validate: False
-      n_hash: 3
-      n_tables: 5
-      similarity_threshold: 0.3
-
+      nbits: 3

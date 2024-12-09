@@ -1,2 +1,2 @@
 
-from user_ann_faiss_lsh import UserANNfaissLSH
+from .user_ann_faiss_lsh import UserANNfaissLSH
