@@ -26,7 +26,7 @@ class ItemFairANN(RecMixin, BaseRecommenderModel):
     Args:
         neighbors: Number of item neighbors
         similarity: Similarity function ('euclidean', 'cosine', 'jaccard')
-        sampling_strategy: Strategy to sample from the buckets ('opt', 'uniform', 'weighted_uniform', 'approx_degree', 'rank')
+        sampling_strategy: Strategy to sample from the buckets ('opt', 'uniform', 'weighted_uniform', 'approx_degree', 'rank', 'no_sampling')
         n_hash: number of hash functions
         n_tables: number of tables (repetitions)
         similarity_threshold: the minimum similarity threshold to be considered as similar after validation

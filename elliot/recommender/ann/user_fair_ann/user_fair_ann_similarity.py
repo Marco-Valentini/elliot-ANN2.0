@@ -120,6 +120,8 @@ class LSHSimilarity(object):
         elif sampling_strategy == 'rank':
             candidates = self._lsh_index.rank_query_simulate(Y=self._URM.toarray(), neighbors=self._num_neighbors,
                                                              runs=1)
+        elif sampling_strategy == 'no_sampling':
+            _, _, candidates, _, _ = self._lsh_index.preprocess_query(self._URM.toarray())
         else:
             raise ValueError("Compute Similarity: value for parameter 'sampling_strategy' not recognized."
                              f"\nAllowed values are: {self.supported_sampling_strategy}."
@@ -132,14 +134,23 @@ class LSHSimilarity(object):
             similarity_function = lambda a, b: 1 / (1 + euclidean_distances(a, b))
         elif similarity == "jaccard":
             similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a, b, metric="jaccard"))
+        if sampling_strategy == 'no_sampling':
+            for item, neighbors in enumerate(candidates):
+                # Get the representation vector for the current item
+                item_vector = self._URM[item].toarray()
 
-        for item, neighbors in candidates.items():
-            # Get the representation vector for the current item
-            item_vector = self._URM[item].toarray()
+                # Compute similarities only with the neighbors and Populate the similarity matrix
+                neighbor_vectors = self._URM[list(neighbors)].toarray()
+                self._similarity_matrix[item, list(neighbors)] = similarity_function(neighbor_vectors,
+                                                                                     item_vector).reshape(-1)
+        else:
+            for item, neighbors in candidates.items():
+                # Get the representation vector for the current item
+                item_vector = self._URM[item].toarray()
 
-            # Compute similarities only with the neighbors and Populate the similarity matrix
-            neighbor_vectors = self._URM[neighbors].toarray()
-            self._similarity_matrix[item, neighbors] = similarity_function(neighbor_vectors, item_vector).reshape(-1)
+                # Compute similarities only with the neighbors and Populate the similarity matrix
+                neighbor_vectors = self._URM[neighbors].toarray()
+                self._similarity_matrix[item, neighbors] = similarity_function(neighbor_vectors, item_vector).reshape(-1)
 
     def get_user_recs(self, u, mask, k):
         user_id = self._data.public_users.get(u)

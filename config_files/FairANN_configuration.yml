@@ -52,7 +52,7 @@ experiment:
 #        validation_metric: nDCG@10
 #      neighbors: 50
 #      similarity: cosine
-#      sampling_strategy: uniform
+#      sampling_strategy: no_sampling
 #      validate: False
 #      n_hash: 3
 #      n_tables: 5
@@ -64,33 +64,33 @@ experiment:
 #        validation_metric: nDCG@10
 #      neighbors: 50
 #      similarity: cosine
-#      sampling_strategy: uniform
+#      sampling_strategy: no_sampling
 #      validate: False
 #      n_hash: 3
 #      n_tables: 5
 #      similarity_threshold: 0.3
-#    ItemANNLSH:
-#      meta:
-#        verbose: True
-#        save_recs: False
-#        validation_metric: nDCG@10
-#      neighbors: 50
-#      similarity: cosine
-#      validate: False
-#      n_hash: 3
-#      n_tables: 5
-#      similarity_threshold: 0.3
-#    UserANNLSH:
-#      meta:
-#        verbose: True
-#        save_recs: False
-#        validation_metric: nDCG@10
-#      neighbors: 50
-#      similarity: cosine
-#      validate: False
-#      n_hash: 3
-#      n_tables: 5
-#      similarity_threshold: 0.3
+    ItemANNLSH:
+      meta:
+        verbose: True
+        save_recs: False
+        validation_metric: nDCG@10
+      neighbors: 50
+      similarity: cosine
+      validate: False
+      n_hash: 3
+      n_tables: 5
+      similarity_threshold: 0.3
+    UserANNLSH:
+      meta:
+        verbose: True
+        save_recs: False
+        validation_metric: nDCG@10
+      neighbors: 50
+      similarity: cosine
+      validate: False
+      n_hash: 3
+      n_tables: 5
+      similarity_threshold: 0.3
 #    ItemANNfaissLSH:
 #      meta:
 #        verbose: True
