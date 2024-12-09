@@ -22,7 +22,7 @@ class ItemANNOY(RecMixin, BaseRecommenderModel):
     r"""
     ANNOY-based ANN recommendations: item-to-item collaborative filtering, with approximated neighbors search
 
-    For further details, please refer to the `paper MISSING`_
+    For further details, please refer to the `https://github.com/spotify/annoy`_
 
     Args:
         neighbors: Number of item neighbors

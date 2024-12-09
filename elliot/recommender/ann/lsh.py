@@ -4,6 +4,8 @@ import time
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
 from sklearn.metrics import pairwise_distances
 
+# implementation taken from `https://github.com/alfahaf/fair-nn`
+
 
 class LSHBuilder:
     methods = ["opt",

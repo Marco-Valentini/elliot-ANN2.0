@@ -20,7 +20,7 @@ class UserANNfaissLSH(RecMixin, BaseRecommenderModel):
     r"""
     FAISS IndexLSH-based ANN recommendations: user-to-user collaborative filtering, with approximated neighbors search
 
-    For further details, please refer to the `paper MISSING`_
+    For further details, please refer to the `https://github.com/facebookresearch/faiss`_
 
     Args:
         neighbors: Number of item neighbors

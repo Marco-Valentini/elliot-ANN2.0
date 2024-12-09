@@ -21,7 +21,7 @@ class ItemANNLSH(RecMixin, BaseRecommenderModel):
     r"""
     ANN recommendations: item-to-item collaborative filtering, with approximation for all the items in the neighborhood
 
-    For further details, please refer to the `paper `_
+    For further details, please refer to the `paper https://dl.acm.org/doi/abs/10.1145/3543667`_
 
     Args:
         neighbors: Number of item neighbors

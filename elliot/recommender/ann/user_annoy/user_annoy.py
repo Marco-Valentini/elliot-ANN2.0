@@ -20,7 +20,7 @@ class UserANNOY(RecMixin, BaseRecommenderModel):
     r"""
     ANNOY-based ANN recommendations: user-to-user collaborative filtering, with approximated neighbors search
 
-    For further details, please refer to the `paper MISSING`_
+    For further details, please refer to the `https://github.com/spotify/annoy`_
 
     Args:
         neighbors: Number of item neighbors
