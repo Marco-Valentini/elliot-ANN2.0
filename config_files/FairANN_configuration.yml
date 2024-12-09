@@ -98,10 +98,26 @@ experiment:
 #      neighbors: 40
 #      similarity: cosine
 #      nbits: 3
-    UserANNfaissLSH:
-      meta:
-        verbose: True
-        save_recs: False
-      neighbors: 40
-      similarity: cosine
-      nbits: 3
+#    UserANNfaissLSH:
+#      meta:
+#        verbose: True
+#        save_recs: False
+#      neighbors: 40
+#      similarity: cosine
+#      nbits: 3
+#    ItemANNOY:
+#      meta:
+#        verbose: True
+#        save_recs: True
+#      neighbors: 40
+#      similarity: angular
+#      n_trees: 3
+#      search_k: -1
+#    UserANNOY:
+#      meta:
+#        verbose: True
+#        save_recs: True
+#      neighbors: 40
+#      similarity: angular
+#      n_trees: 3
+#      search_k: -1

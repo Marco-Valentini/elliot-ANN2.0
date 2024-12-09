@@ -116,6 +116,7 @@ class LSHSimilarity(object):
             candidates = self._lsh_index.approx_degree_query(Y=self._URM.T.toarray(), neighbors=self._num_neighbors, runs=1)
         elif sampling_strategy == 'rank':
             candidates = self._lsh_index.rank_query_simulate(Y=self._URM.T.toarray(), neighbors=self._num_neighbors, runs=1)
+        # TODO aggiungere sampling_strategy == 'no_sampling'/'all' dove prendiamo tutti
         else:
             raise ValueError("Compute Similarity: value for parameter 'sampling_strategy' not recognized."
                              f"\nAllowed values are: {self.supported_sampling_strategy}."

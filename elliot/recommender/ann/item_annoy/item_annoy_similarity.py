@@ -1,0 +1,145 @@
+# supported similarities by ANNOY: Euclidean, Manhattan, Cosine, Hamming, dot product
+
+import pickle
+
+import numpy as np
+from scipy import sparse
+
+# Approximated Nearest Neighbor Search method used at Spotify
+from annoy import AnnoyIndex
+class ANNOYSimilarity(object):
+    """
+    ANN class to compute the similarity in an approximated way by exploiting LSH
+    """
+
+    def __init__(self, data, num_neighbors, similarity, implicit, n_trees, search_k):
+        self._data = data
+        self._ratings = data.train_dict  # TODO capire se serve oppure no, è un dizionario {UserId: {ItemId:Rating}}
+        self._num_neighbors = num_neighbors
+        self._similarity = similarity
+        self._n_trees = n_trees
+        self._search_k = search_k
+        self._implicit = implicit # tells whether to use the ratings as explicit or implicit feedbacks
+
+        if self._implicit:
+            self._URM = self._data.sp_i_train
+        else:
+            self._URM = self._data.sp_i_train_ratings
+
+        self._users = self._data.users  # contains a list of userIDs
+        self._items = self._data.items  # contains a list of itemIDs
+        self._private_users = self._data.private_users  # contains the mapping from private ID to public ID
+        self._public_users = self._data.public_users  # contains the mapping from public ID to private ID
+        self._private_items = self._data.private_items  # contains the mapping from private ID to public ID
+        self._public_items = self._data.public_items  # contains the mapping from public ID to private ID
+
+        # instantiate an AnnoyIndex object
+        # first input argument is f, second one is metric
+        # f is the dimensionality of the data we need to index -> the items are represented in terms of users
+        # metric is the distance we want to use
+        self._index_annoy = AnnoyIndex(f=len(self._data.users), metric=self._similarity)
+
+
+
+    def initialize(self):
+        """
+        This function initialize the data model
+        """
+        self.supported_dissimilarities = ['angular', 'euclidean', 'manhattan', 'hamming', 'dot']
+        print(f"\nSupported distances: {self.supported_dissimilarities}\n")
+
+        # initialize the similarity matrix
+        self._similarity_matrix = np.empty((len(self._items), len(self._items)))
+        # process the similarity matrix by giving the similarity parameter
+        self.process_similarity(self._similarity)  # the resulting matrix will be an ndarray
+
+        data, rows_indices, cols_indptr = [], [], []
+
+        column_row_index = np.arange(len(self._data.items), dtype=np.int32)
+
+        for item_idx in range(len(self._data.items)):
+            cols_indptr.append(len(data))
+            column_data = self._similarity_matrix[:, item_idx]
+
+            non_zero_data = column_data != 0
+
+            idx_sorted = np.argsort(column_data[non_zero_data])  # sort by column
+            top_k_idx = idx_sorted[-self._num_neighbors:]
+
+            data.extend(column_data[non_zero_data][top_k_idx])
+            rows_indices.extend(column_row_index[non_zero_data][top_k_idx])
+
+        cols_indptr.append(len(data))
+
+        W_sparse = sparse.csc_matrix((data, rows_indices, cols_indptr),
+                                     shape=(len(self._data.items), len(self._data.items)), dtype=np.float32).tocsr()
+        self._preds = self._URM.dot(W_sparse).toarray()
+
+        del self._similarity_matrix
+
+    def process_similarity(self, similarity):
+        if similarity not in ["angular", "euclidean","manhattan","hamming","dot"]:
+            raise ValueError("Compute Similarity: value for parameter 'similarity' not recognized."
+                             f"\nAllowed values are: {self.supported_dissimilarities}."
+                             f"\nPassed value was {similarity}\n")
+        # insert the data into the index
+        for i in range(len(self._data.items)):
+            self._index_annoy.add_item(i, self._URM.T[i].toarray()[0])
+
+        # build the index
+        self._index_annoy.build(n_trees=self._n_trees, n_jobs=-1)
+
+        # retrieve the data
+        for item in range(len(self._data.items)):
+            # find the k nearest neighbors and the relative distances
+            neighbors, distances = self._index_annoy.get_nns_by_item(item, self._num_neighbors, search_k=self._search_k, include_distances=True)
+            # populate the similarity matrix, converting the distances into similarities
+            self._similarity_matrix[item, neighbors] = 1/(1+np.array(distances))
+
+
+
+    def get_user_recs(self, u, mask, k):
+        user_id = self._data.public_users.get(u)
+        user_recs = self._preds[user_id]
+        # user_items = self._ratings[u].keys()
+        user_recs_mask = mask[user_id]
+        user_recs[~user_recs_mask] = -np.inf
+        indices, values = zip(*[(self._data.private_items.get(u_list[0]), u_list[1])
+                                for u_list in enumerate(user_recs)])
+
+        # indices, values = zip(*predictions.items())
+        indices = np.array(indices)
+        values = np.array(values)
+        local_k = min(k, len(values))
+        partially_ordered_preds_indices = np.argpartition(values, -local_k)[-local_k:]
+        real_values = values[partially_ordered_preds_indices]
+        real_indices = indices[partially_ordered_preds_indices]
+        local_top_k = real_values.argsort()[::-1]
+        return [(real_indices[item], real_values[item]) for item in local_top_k]
+
+    def get_model_state(self):
+        saving_dict = {}
+        saving_dict['_preds'] = self._preds
+        saving_dict['_similarity'] = self._similarity
+        saving_dict['_num_neighbors'] = self._num_neighbors
+        saving_dict['_implicit'] = self._implicit
+        saving_dict['_n_threes'] = self._n_trees
+        saving_dict['_search_k'] = self._search_k
+        return saving_dict
+
+    def set_model_state(self, saving_dict):
+        self._preds = saving_dict['_preds']
+        self._similarity = saving_dict['_similarity']
+        self._num_neighbors = saving_dict['_num_neighbors']
+        self._implicit = saving_dict['_implicit']
+        self._n_trees = saving_dict['_n_trees']
+        self._search_k = saving_dict['_search_k']
+
+    def load_weights(self, path):
+        with open(path, "rb") as f:
+            self.set_model_state(pickle.load(f))
+
+    def save_weights(self, path):
+        with open(path, "wb") as f:
+            pickle.dump(self.get_model_state(), f)
+
