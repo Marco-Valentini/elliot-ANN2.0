@@ -11,3 +11,4 @@ from elliot.dataset.dataset import DataSetLoader, DataSet
 from elliot.dataset.dataloader.knowledge_aware_chains import KnowledgeChainsLoader
 from elliot.dataset.dataloader.visual_dataloader import VisualLoader
 from elliot.dataset.dataloader.item_category_dataloader import ItemCategoryLoader
+from elliot.dataset.modular_loaders.loaders import ItemPopularityUserActivity

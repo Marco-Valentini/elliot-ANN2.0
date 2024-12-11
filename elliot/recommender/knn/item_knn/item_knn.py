@@ -107,19 +107,3 @@ class ItemKNN(RecMixin, BaseRecommenderModel):
 
         self.evaluate()
 
-        # best_metric_value = 0
-        #
-        # recs = self.get_recommendations(self.evaluator.get_needed_recommendations())
-        # result_dict = self.evaluator.eval(recs)
-        # self._results.append(result_dict)
-        # print(f'Finished')
-        #
-        # if self._results[-1][self._validation_k]["val_results"][self._validation_metric] > best_metric_value:
-        #     print("******************************************")
-        #     if self._save_weights:
-        #         with open(self._saving_filepath, "wb") as f:
-        #             pickle.dump(self._model.get_model_state(), f)
-        #     if self._save_recs:
-        #         store_recommendation(recs, self._config.path_output_rec_result + f"{self.name}.tsv")
-
-

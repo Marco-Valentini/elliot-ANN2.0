@@ -1,21 +1,42 @@
 experiment:
   dataset: movielens_100k
   data_config:
-    strategy: dataset
-    dataset_path: ../data/movielens_100k/dataset.tsv
-  binarize: True
-  prefiltering:
-    strategy: global_threshold
-    threshold: 4
-  splitting:
-    test_splitting:
-        strategy: temporal_hold_out
-        test_ratio: 0.2
+    strategy: fixed
+    train_path: ../data/movielens_100k/filtered_data/0/train.tsv
+    test_path: ../data/movielens_100k/filtered_data/0/test.tsv
+    side_information:
+      - dataloader: ItemPopularityUserActivity
+        user_file: ../data/movielens_100k/user_groups_2.tsv
+        item_file: ../data/movielens_100k/item_groups_2.tsv
+        user_group_file: ../data/movielens_100k/group2_to_users.json
+        item_group_file: ../data/movielens_100k/group2_to_items.json
   top_k: 50
   evaluation:
     cutoffs: [5, 10, 20]
     simple_metrics: [nDCG,Precision,ItemCoverage,EPC,Gini]
-    relevance_threshold: 1
+    complex_metrics:
+      - metric: BiasDisparityBD
+        user_clustering_name: UserActivity
+        user_clustering_file: ../data/movielens_100k/user_no_groups.tsv #user_groups_4.tsv
+        item_clustering_name: ItemPopularity
+        item_clustering_file: ../data/movielens_100k/item_groups_4.tsv #item_no_groups.tsv
+      - metric: BiasDisparityBR
+        user_clustering_name: UserActivity
+        user_clustering_file: ../data/movielens_100k/user_no_groups.tsv #user_groups_4.tsv
+        item_clustering_name: ItemPopularity
+        item_clustering_file: ../data/movielens_100k/item_groups_4.tsv #item_no_groups.tsv
+      - metric: BiasDisparityBS
+        user_clustering_name: UserActivity
+        user_clustering_file: ../data/movielens_100k/user_no_groups.tsv #user_groups_4.tsv
+        item_clustering_name: ItemPopularity
+        item_clustering_file: ../data/movielens_100k/item_groups_4.tsv #item_no_groups.tsv
+      - metric: REO
+        clustering_name: ItemPopularity
+        clustering_file: ../data/movielens_100k/item_groups_4.tsv
+      - metric: RSP
+        clustering_name: ItemPopularity
+        clustering_file: ../data/movielens_100k/item_groups_4.tsv
+
 #  gpu: 1
   external_models_path: ../external/models/__init__.py
   models:
@@ -69,28 +90,28 @@ experiment:
 #      n_hash: 3
 #      n_tables: 5
 #      similarity_threshold: 0.3
-    ItemANNLSH:
-      meta:
-        verbose: True
-        save_recs: False
-        validation_metric: nDCG@10
-      neighbors: 50
-      similarity: cosine
-      validate: False
-      n_hash: 3
-      n_tables: 5
-      similarity_threshold: 0.3
-    UserANNLSH:
-      meta:
-        verbose: True
-        save_recs: False
-        validation_metric: nDCG@10
-      neighbors: 50
-      similarity: cosine
-      validate: False
-      n_hash: 3
-      n_tables: 5
-      similarity_threshold: 0.3
+#    ItemANNLSH:
+#      meta:
+#        verbose: True
+#        save_recs: False
+#        validation_metric: nDCG@10
+#      neighbors: 50
+#      similarity: cosine
+#      validate: False
+#      n_hash: 3
+#      n_tables: 5
+#      similarity_threshold: 0.3
+#    UserANNLSH:
+#      meta:
+#        verbose: True
+#        save_recs: False
+#        validation_metric: nDCG@10
+#      neighbors: 50
+#      similarity: cosine
+#      validate: False
+#      n_hash: 3
+#      n_tables: 5
+#      similarity_threshold: 0.3
 #    ItemANNfaissLSH:
 #      meta:
 #        verbose: True
@@ -121,3 +142,19 @@ experiment:
 #      similarity: angular
 #      n_trees: 3
 #      search_k: -1
+    ItemKNNfairness:
+      meta:
+        verbose: False
+        save_recs: False
+        validation_metric: nDCG@10
+      neighbors: 40
+      similarity: cosine
+      post_processing: parity
+    UserKNNfairness:
+      meta:
+        verbose: False
+        save_recs: False
+        validation_metric: nDCG@10
+      neighbors: 40
+      similarity: cosine
+      post_processing: parity
