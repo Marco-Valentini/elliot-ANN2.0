@@ -149,6 +149,7 @@ experiment:
         validation_metric: nDCG@10
       neighbors: 40
       similarity: cosine
+      pre_processing: interactions
       post_processing: parity
     UserKNNfairness:
       meta:
@@ -157,4 +158,5 @@ experiment:
         validation_metric: nDCG@10
       neighbors: 40
       similarity: cosine
+      pre_processing: interactions
       post_processing: parity

@@ -5,7 +5,7 @@ Module description:
 
 __version__ = '0.3.1'
 __author__ = 'Marco Valentini'
-__email__ = 'm.valentini7@studenti.poliba.it'
+__email__ = 'm.valentini7@phd.poliba.it'
 
 import pickle
 import time
@@ -29,6 +29,7 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
         similarity: Similarity function
         implementation: Implementation type ('aiolli', 'classical')
         post_processing: ('value', 'parity')
+        pre_processing: ('interactions', 'items')
 
 
     To include the recommendation model, add it to the config file adopting the following pattern:
@@ -41,8 +42,8 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
             save_recs: True
           neighbors: 40
           similarity: cosine
-          post_processing: ('value', 'parity')
-          pre_processing: True/False
+          post_processing: parity
+          pre_processing: interactions
     """
     @init_charger
     def __init__(self, data, config, params, *args, **kwargs):
@@ -52,7 +53,7 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
             ("_similarity", "similarity", "sim", "cosine", None, None),
             ("_implicit", "implicit", "bin", False, None, None),
             ("_post_processing", "post_processing", "pp", None, None, None),
-            ("_pre_processing", "pre_processing", "prep", False, None, None)
+            ("_pre_processing", "pre_processing", "prep", None, None, None)
         ]
         self.autoset_params()
 

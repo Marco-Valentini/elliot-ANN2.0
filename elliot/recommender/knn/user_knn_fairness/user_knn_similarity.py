@@ -4,6 +4,7 @@ import numpy as np
 from scipy import sparse
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances, haversine_distances, chi2_kernel, manhattan_distances
 from sklearn.metrics import pairwise_distances
+import random
 
 
 class Similarity(object):
@@ -41,6 +42,74 @@ class Similarity(object):
         self.supported_dissimilarities = ["euclidean", "manhattan", "haversine",  "chi2", 'cityblock', 'l1', 'l2', 'braycurtis', 'canberra', 'chebyshev', 'correlation', 'dice', 'hamming', 'jaccard', 'kulsinski', 'mahalanobis', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean', 'yule']
         print(f"\nSupported Similarities: {self.supported_similarities}")
         print(f"Supported Distances/Dissimilarities: {self.supported_dissimilarities}\n")
+
+        if self._pre_processing == None:
+            pass
+        elif self._pre_processing == 'interactions':
+            # convert the train and test dict into private mappings
+            self._data.private_train_dict = {self._data.public_users.get(user): [self._data.public_items.get(item) for item in items] for user, items in self._data.train_dict.items()}
+            self._data.private_test_dict = {self._data.public_users.get(user): [self._data.public_items.get(item) for item in items] for user, items in self._data.test_dict.items()}
+            # read the information about the group and convert it into private IDs
+            g1 = self._data.side_information.ItemPopularityUserActivity.user_group_map['0']  # long-tail group
+            g2 = self._data.side_information.ItemPopularityUserActivity.user_group_map['1']  # most popular group
+            # map the public IDs to the private IDs
+            g1 = [self._data.public_items.get(i) for i in g1]
+            g2 = [self._data.public_items.get(i) for i in g2]
+            # count the interactions in the group 1
+            train_interactions_g1 = [[user, item] for user, items in self._data.private_train_dict.items() for item in
+                                     items if user in g1]
+            train_interactions_g2 = [[user, item] for user, items in self._data.private_train_dict.items() for item in
+                                     items if user in g2]
+            # count the interactions in the group 2
+            test_interactions_g1 = [[user, item] for user, items in self._data.private_test_dict.items() for item in
+                                    items if user in g1]
+            test_interactions_g2 = [[user, item] for user, items in self._data.private_test_dict.items() for item in
+                                    items if user in g2]
+            # sample the interactions to balance the 2 groups
+            if len(train_interactions_g1) < len(train_interactions_g2):
+                n_to_remove = len(train_interactions_g2) - len(train_interactions_g1)
+                train_interactions_to_remove = random.sample(train_interactions_g2, n_to_remove)
+            elif len(train_interactions_g2) < len(train_interactions_g1):
+                n_to_remove = len(train_interactions_g1) - len(train_interactions_g2)
+                train_interactions_to_remove = random.sample(train_interactions_g1, n_to_remove)
+            else:
+                train_interactions_to_remove = []
+            if len(test_interactions_g1) < len(test_interactions_g2):
+                n_to_remove = len(test_interactions_g2) - len(test_interactions_g1)
+                test_interactions_to_remove = random.sample(test_interactions_g2, n_to_remove)
+            elif len(test_interactions_g2) < len(test_interactions_g1):
+                n_to_remove = len(test_interactions_g1) - len(test_interactions_g2)
+                test_interactions_to_remove = random.sample(test_interactions_g1, n_to_remove)
+            else:
+                test_interactions_to_remove = []
+            # remove the interactions to balance them -> set them to 0
+            interactions_to_remove = train_interactions_to_remove + test_interactions_to_remove
+            rows_to_remove, cols_to_remove = zip(*interactions_to_remove)
+            self._URM[rows_to_remove, cols_to_remove] = 0
+        elif self._pre_processing == 'users':
+            # count the users in the group 1
+            g1 = self._data.side_information.ItemPopularityUserActivity.user_group_map['0']  # long-tail group
+            # count the users in the group 2
+            g2 = self._data.side_information.ItemPopularityUserActivity.user_group_map['1']  # most popular group
+            # sample the users to balance the 2 groups -> sampling without replacement
+            if len(g1) < len(g2):
+                g2 = np.random.choice(g2, len(g1), replace=False)
+            elif len(g2) < len(g1):
+                g1 = np.random.choice(g1, len(g2), replace=False)
+            # map the public IDs to the private IDs
+            g1 = [self._data.public_users.get(i) for i in g1]
+            g2 = [self._data.public_users.get(i) for i in g2]
+            # reduce the items
+            reduced = g1 + g2
+            self._private_users = {u: user for u, user in self._private_users.items() if u in reduced}
+            self._public_users = {u: user for u, user in self._public_users.items() if user in reduced}
+            self._users = list(self._public_users.keys())
+            # update the URM
+            self._URM = self._URM[reduced, :]
+            # TODO capire cosa modificare per adattarsi alla pipeline di Elliot
+        else:
+            raise ValueError(f"Pre processing: {self._pre_processing} not recognized. Try with pre_processing: ('interactions', 'users')")
+
 
 
         self._similarity_matrix = np.empty((len(self._users), len(self._users)))
@@ -120,8 +189,8 @@ class Similarity(object):
             rows_g2_test, cols_g2_test = zip(*g2_test_idx)
             self._preds[rows_g1_test, cols_g1_test] = self._preds[rows_g1_test, cols_g1_test] + delta_train_g1
             self._preds[rows_g2_test, cols_g2_test] = self._preds[rows_g2_test, cols_g2_test] + delta_train_g2
-
-
+        elif self._post_processing is None:
+            pass
         else:
             raise ValueError(f"Post processing: {self._post_processing} not recognized. Try with post_processing: ('value', 'parity')")
 
