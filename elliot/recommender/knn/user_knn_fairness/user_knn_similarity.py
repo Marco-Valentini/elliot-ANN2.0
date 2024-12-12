@@ -101,12 +101,18 @@ class Similarity(object):
             g2 = [self._data.public_users.get(i) for i in g2]
             # reduce the items
             reduced = g1 + g2
+            self._data.users = [self._data.private_users.get(i) for i in reduced] # keep a list of public item IDs
+            self._users = self._data.users
+            # now we need to map the new IDs to the [0, n-1] range, keeping their correspondance with public IDs
             self._private_users = {u: user for u, user in self._private_users.items() if u in reduced}
-            self._public_users = {u: user for u, user in self._public_users.items() if user in reduced}
-            self._users = list(self._public_users.keys())
+            self._private_users = {u: user for u, user in enumerate(self._private_users.values())}
+            self._public_users = {user: u for u, user in self._private_users.items()}
             # update the URM
             self._URM = self._URM[reduced, :]
-            # TODO capire cosa modificare per adattarsi alla pipeline di Elliot
+            # update the unrated mask
+            self._data.allunrated_mask = self._data.allunrated_mask[reduced, :]
+            # ridurre dai ratings e dalla unrated mask
+            self._ratings = {u: items for u, items in self._ratings.items() if u in self._users}
         else:
             raise ValueError(f"Pre processing: {self._pre_processing} not recognized. Try with pre_processing: ('interactions', 'users')")
 

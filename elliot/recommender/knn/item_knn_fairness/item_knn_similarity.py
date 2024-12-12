@@ -101,7 +101,6 @@ class Similarity(object):
             interactions_to_remove = train_interactions_to_remove + test_interactions_to_remove
             rows_to_remove, cols_to_remove = zip(*interactions_to_remove)
             self._URM[rows_to_remove, cols_to_remove] = 0
-
         elif self._pre_processing == 'items':
             # count the items in the group 1
             g1 = self._data.side_information.ItemPopularityUserActivity.item_group_map['0'] # long-tail group
@@ -116,14 +115,17 @@ class Similarity(object):
             g1 = [self._data.public_items.get(i) for i in g1]
             g2 = [self._data.public_items.get(i) for i in g2]
             # reduce the items
-            reduced = g1 + g2
+            reduced = g1 + g2 # these are private indexes (from 0 to n-1)
+            self._data.items = [self._data.private_items.get(i) for i in reduced] # keep a list of public item IDs
+            self._items = self._data.items
+            # now we need to map the new IDs to the [0, n-1] range, keeping their correspondance with public IDs
             self._private_items = {i: item for i, item in self._private_items.items() if i in reduced}
-            self._public_items = {i: item for i, item in self._public_items.items() if item in reduced}
-            self._items = list(self._public_items.keys())
-            self._data.items = self._items
+            self._private_items = {i: item for i, item in enumerate(self._private_items.values())}
+            self._public_items = {item: i for i, item in self._private_items.items()}
             # update the URM
             self._URM = self._URM[:, reduced]
-            # TODO capire cosa modificare per adattarsi alla pipeline di Elliot
+            # update also the mask
+            self._data.allunrated_mask = self._data.allunrated_mask[:, reduced]
         else:
             raise ValueError(f"Pre processing: {self._pre_processing} not recognized. Try with pre_processing: ('interactions', 'users')")
 

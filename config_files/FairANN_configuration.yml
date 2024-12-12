@@ -142,15 +142,15 @@ experiment:
 #      similarity: angular
 #      n_trees: 3
 #      search_k: -1
-    ItemKNNfairness:
-      meta:
-        verbose: False
-        save_recs: False
-        validation_metric: nDCG@10
-      neighbors: 40
-      similarity: cosine
-      pre_processing: interactions
-      post_processing: parity
+#    ItemKNNfairness:
+#      meta:
+#        verbose: False
+#        save_recs: False
+#        validation_metric: nDCG@10
+#      neighbors: 40
+#      similarity: cosine
+#      pre_processing: items
+##      post_processing: parity
     UserKNNfairness:
       meta:
         verbose: False
@@ -158,5 +158,5 @@ experiment:
         validation_metric: nDCG@10
       neighbors: 40
       similarity: cosine
-      pre_processing: interactions
-      post_processing: parity
+      pre_processing: users
+#      post_processing: parity

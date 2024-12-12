@@ -52,7 +52,7 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
             ("_num_neighbors", "neighbors", "nn", 40, int, None),
             ("_similarity", "similarity", "sim", "cosine", None, None),
             ("_implicit", "implicit", "bin", False, None, None),
-            ("_post_processing", "post_processing", "pp", None, None, None),
+            ("_post_processing", "post_processing", "posp", None, None, None),
             ("_pre_processing", "pre_processing", "prep", None, None, None)
         ]
         self.autoset_params()
