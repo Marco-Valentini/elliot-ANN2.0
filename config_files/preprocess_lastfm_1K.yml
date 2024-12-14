@@ -1,0 +1,26 @@
+experiment:
+  backend: pytorch
+  dataset: lastfm_1K
+  data_config:
+    strategy: dataset
+    dataset_path: ../data/lastfm-1K/dataset.tsv
+  prefiltering:
+    - strategy: user_average
+      #TODO quale k-core?
+  binarize: True
+  splitting:
+    save_on_disk: True
+    save_folder: ../data/lastfm-1K/filtered_data/
+    test_splitting:
+      test_ratio: 0.2
+      strategy: temporal_hold_out
+  top_k: 50
+  evaluation:
+    cutoffs: 20 # [10, 20, 50]
+    simple_metrics: [ nDCGRendle2020, Recall, HR, Precision, MAP, MRR ]
+  gpu: 0
+  external_models_path: ../external/models/__init__.py
+  models:
+    Random:
+      meta:
+        save_recs: False
