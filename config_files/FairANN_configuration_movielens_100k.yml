@@ -19,31 +19,32 @@ experiment:
         user_clustering_name: UserActivity
         user_clustering_file: ../data/movielens_100k/user_no_groups.tsv #user_groups_4.tsv
         item_clustering_name: ItemPopularity
-        item_clustering_file: ../data/movielens_100k/item_groups_4.tsv #item_no_groups.tsv
+        item_clustering_file: ../data/movielens_100k/item_groups_2.tsv #item_no_groups.tsv
       - metric: BiasDisparityBR
         user_clustering_name: UserActivity
         user_clustering_file: ../data/movielens_100k/user_no_groups.tsv #user_groups_4.tsv
         item_clustering_name: ItemPopularity
-        item_clustering_file: ../data/movielens_100k/item_groups_4.tsv #item_no_groups.tsv
+        item_clustering_file: ../data/movielens_100k/item_groups_2.tsv #item_no_groups.tsv
       - metric: BiasDisparityBS
         user_clustering_name: UserActivity
         user_clustering_file: ../data/movielens_100k/user_no_groups.tsv #user_groups_4.tsv
         item_clustering_name: ItemPopularity
-        item_clustering_file: ../data/movielens_100k/item_groups_4.tsv #item_no_groups.tsv
+        item_clustering_file: ../data/movielens_100k/item_groups_2.tsv #item_no_groups.tsv
       - metric: REO
         clustering_name: ItemPopularity
-        clustering_file: ../data/movielens_100k/item_groups_4.tsv
+        clustering_file: ../data/movielens_100k/item_groups_2.tsv
       - metric: RSP
         clustering_name: ItemPopularity
-        clustering_file: ../data/movielens_100k/item_groups_4.tsv
+        clustering_file: ../data/movielens_100k/item_groups_2.tsv
 
 #  gpu: 1
   external_models_path: ../external/models/__init__.py
+  #TODO cambiare tutti i save_recs a True
   models:
     Random:
       meta:
         verbose: True
-        save_recs: True
+        save_recs: False
       seed: 42
     external.MostPop:
       meta:
@@ -55,7 +56,7 @@ experiment:
         verbose: False
         save_recs: False
         validation_metric: nDCG@10
-      neighbors: 40 # TODO discutere valori qui
+      neighbors: [10, 50, 100] # TODO discutere valori qui
       similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
       implementation: standard
     UserKNN:
@@ -63,7 +64,7 @@ experiment:
         verbose: False
         save_recs: False
         validation_metric: nDCG@10
-      neighbors: 40 # TODO discutere valori qui
+      neighbors: [10, 50, 100] # TODO discutere valori qui
       similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
       implementation: standard
     ItemFairANN:
@@ -71,7 +72,7 @@ experiment:
         verbose: True
         save_recs: False
         validation_metric: nDCG@10
-      neighbors: 50 # TODO discutere valori qui
+      neighbors: [10, 50, 100] # TODO discutere valori qui
       similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
       sampling_strategy: [no_sampling, uniform, weighted_uniform, rank, opt, approx_degree]
       validate: False # TODO questo non lo metterei
@@ -83,7 +84,7 @@ experiment:
         verbose: True
         save_recs: False
         validation_metric: nDCG@10
-      neighbors: 50 # TODO discutere valori qui
+      neighbors: [10, 50, 100] # TODO discutere valori qui
       similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
       sampling_strategy: [no_sampling, uniform, weighted_uniform, rank, opt, approx_degree]
       validate: False # TODO questo non lo metterei
@@ -117,29 +118,29 @@ experiment:
       meta:
         verbose: True
         save_recs: False
-      neighbors: 40 # TODO discutere valori qui
+      neighbors: [10, 50, 100] # TODO discutere valori qui
       similarity: cosine #TODO qui potrebbe andare potenzialmente qualsiasi
       nbits: 3 # TODO discutere valori qui
     UserANNfaissLSH:
       meta:
         verbose: True
         save_recs: False
-      neighbors: 40 # TODO discutere valori qui
+      neighbors: [10, 50, 100] # TODO discutere valori qui
       similarity: cosine #TODO qui potrebbe andare potenzialmente qualsiasi
       nbits: 3 # TODO discutere valori qui
     ItemANNOY:
       meta:
         verbose: True
         save_recs: True
-      neighbors: 40
-      similarity: angular
+      neighbors: [10, 50, 100]
+      similarity: [angular, euclidean, manhattan, hamming, dot]
       n_trees: 3 # TODO discutere valori qui
       search_k: -1 # TODO discutere valori qui
     UserANNOY:
       meta:
         verbose: True
         save_recs: True
-      neighbors: 40
+      neighbors: [10, 50, 100]
       similarity: [angular, euclidean, manhattan, hamming, dot]
       n_trees: 3 # TODO discutere valori qui
       search_k: -1 # TODO discutere valori qui
@@ -148,18 +149,18 @@ experiment:
         verbose: False
         save_recs: False
         validation_metric: nDCG@10
-      neighbors: 40 # TODO discutere valori qui
-      similarity: cosine #TODO qui potrebbe andare potenzialmente qualsiasi
+      neighbors: [10, 50, 100] # TODO discutere valori qui
+      similarity: [cosine, jaccard, euclidean] #TODO qui potrebbe andare potenzialmente qualsiasi
 # qui si può scegliere uno solo dei due (loro ne usano uno per volta, non so se vogliamo combinarli noi, io eviterei)
-      pre_processing: items
+      pre_post_processing: [value, parity, interactions, items]
 #      post_processing: parity
     UserKNNfairness:
       meta:
         verbose: False
         save_recs: False
         validation_metric: nDCG@10
-      neighbors: 40 # TODO discutere valori qui
-      similarity: cosine #TODO qui potrebbe andare potenzialmente qualsiasi
-      pre_processing: users
+      neighbors: [10, 50, 100] # TODO discutere valori qui
+      similarity: [cosine, jaccard, euclidean] #TODO qui potrebbe andare potenzialmente qualsiasi
+      pre_processing: [value, parity, interactions, items]
 #      post_processing: parity
 
