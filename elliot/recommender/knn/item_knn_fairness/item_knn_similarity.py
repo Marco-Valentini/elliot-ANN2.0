@@ -14,14 +14,13 @@ class Similarity(object):
     Simple kNN class
     """
 
-    def __init__(self, data, num_neighbors, similarity, implicit, post_processing, pre_processing):
+    def __init__(self, data, num_neighbors, similarity, implicit, pre_post_processing):
         self._data = data
         self._ratings = data.train_dict
         self._num_neighbors = num_neighbors
         self._similarity = similarity
         self._implicit = implicit
-        self._post_processing = post_processing
-        self._pre_processing = pre_processing
+        self._pre_post_processing = pre_post_processing
 
         if self._implicit:
             self._URM = self._data.sp_i_train  # this stores the interactions
@@ -49,9 +48,9 @@ class Similarity(object):
         print(f"\nSupported Similarities: {self.supported_similarities}")
         print(f"Supported Distances/Dissimilarities: {self.supported_dissimilarities}\n")
 
-        if self._pre_processing == None:
+        if self._pre_post_processing == None:
             pass
-        elif self._pre_processing == 'interactions':
+        elif self._pre_post_processing == 'interactions':
             # convert the train and test dict into private mappings
             self._data.private_train_dict = {self._data.public_users.get(user): [self._data.public_items.get(item) for item in items] for user, items in self._data.train_dict.items()}
             self._data.private_test_dict = {self._data.public_users.get(user): [self._data.public_items.get(item) for item in items] for user, items in self._data.test_dict.items()}
@@ -101,7 +100,7 @@ class Similarity(object):
             interactions_to_remove = train_interactions_to_remove + test_interactions_to_remove
             rows_to_remove, cols_to_remove = zip(*interactions_to_remove)
             self._URM[rows_to_remove, cols_to_remove] = 0
-        elif self._pre_processing == 'items':
+        elif self._pre_post_processing == 'items':
             # count the items in the group 1
             g1 = self._data.side_information.ItemPopularityUserActivity.item_group_map['0'] # long-tail group
             # count the items in the group 2
@@ -127,7 +126,7 @@ class Similarity(object):
             # update also the mask
             self._data.allunrated_mask = self._data.allunrated_mask[:, reduced]
         else:
-            raise ValueError(f"Pre processing: {self._pre_processing} not recognized. Try with pre_processing: ('interactions', 'users')")
+            raise ValueError(f"Pre processing: {self._pre_post_processing} not recognized. Try with pre_processing: ('interactions', 'users')")
 
         self._similarity_matrix = np.empty((len(self._items), len(self._items)))
 
@@ -155,9 +154,9 @@ class Similarity(object):
                                      shape=(len(self._data.items), len(self._data.items)), dtype=np.float32).tocsr()
         self._preds = self._URM.dot(W_sparse).toarray()
         # for the item-based algorithm we use the Item Popularity grouping
-        if self._post_processing == 'value':
+        if self._pre_post_processing == 'value':
             pass
-        elif self._post_processing == 'parity':
+        elif self._pre_post_processing == 'parity':
             # map the train dict from the public IDs to the private IDs
             self._data.private_train_dict = {self._data.public_users.get(user): [self._data.public_items.get(item) for item in items] for user, items in self._data.train_dict.items()}
             # map the test dict from the public IDs to the private IDs
@@ -213,10 +212,10 @@ class Similarity(object):
             rows_g2_test, cols_g2_test = zip(*g2_test_idx)
             self._preds[rows_g1_test, cols_g1_test] = self._preds[rows_g1_test, cols_g1_test] + delta_train_g1
             self._preds[rows_g2_test, cols_g2_test] = self._preds[rows_g2_test, cols_g2_test] + delta_train_g2
-        elif self._post_processing is None:
+        elif self._pre_post_processing is None:
             pass
         else:
-            raise ValueError(f"Post processing: {self._post_processing} not recognized. Try with post_processing: ('value', 'parity')")
+            raise ValueError(f"Post processing: {self._pre_post_processing} not recognized. Try with post_processing: ('value', 'parity')")
 
         del self._similarity_matrix
 
@@ -271,6 +270,7 @@ class Similarity(object):
         saving_dict['_similarity'] = self._similarity
         saving_dict['_num_neighbors'] = self._num_neighbors
         saving_dict['_implicit'] = self._implicit
+        saving_dict['_pre_post_processing'] = self._pre_post_processing
         return saving_dict
 
     def set_model_state(self, saving_dict):
@@ -278,6 +278,7 @@ class Similarity(object):
         self._similarity = saving_dict['_similarity']
         self._num_neighbors = saving_dict['_num_neighbors']
         self._implicit = saving_dict['_implicit']
+        self._pre_post_processing = saving_dict['_pre_post_processing']
 
     def load_weights(self, path):
         with open(path, "rb") as f:

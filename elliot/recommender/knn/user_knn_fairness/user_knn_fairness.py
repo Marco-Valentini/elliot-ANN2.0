@@ -22,14 +22,15 @@ class UserKNNfairness(RecMixin, BaseRecommenderModel):
     r"""
     GroupLens: An Open Architecture for Collaborative Filtering of Netnews
 
-    For further details, please refer to the `paper https://www.sciencedirect.com/science/article/pii/S0306457321001369?ref=pdf_download&fr=RR-2&rr=8f05cb5e1b595252`_
+    For further details, please refer to the `paper https://www.sciencedirect.com/science/article/pii/S0306457321001369?ref=pdf_download&fr=RR-2&rr=8f05cb5e1b595252
+    https://proceedings.mlr.press/v81/ekstrand18b/ekstrand18b.pdf`_
 
     Args:
         neighbors: Number of item neighbors
         similarity: Similarity function
         implementation: Implementation type ('aiolli', 'classical')
-        post_processing: ('value', 'parity')
-        pre_processing: ('interactions', 'users')
+        pre_post_processing: ('value', 'parity', 'interactions', 'users') # in this way we can apply either a
+        preprocessing or a post processing strategy in the experiment, they haven't been tought to be combined
 
 
     To include the recommendation model, add it to the config file adopting the following pattern:
@@ -42,8 +43,7 @@ class UserKNNfairness(RecMixin, BaseRecommenderModel):
             save_recs: True
           neighbors: 40
           similarity: cosine
-          post_processing: parity
-          pre_processing: interactions
+          pre_post_processing: parity/interactions
 
     """
     @init_charger
@@ -53,14 +53,13 @@ class UserKNNfairness(RecMixin, BaseRecommenderModel):
             ("_num_neighbors", "neighbors", "nn", 40, int, None),
             ("_similarity", "similarity", "sim", "cosine", None, None),
             ("_implicit", "implicit", "bin", False, None, None),
-            ("_post_processing", "post_processing", "posp", None, None, None),
-            ("_pre_processing", "pre_processing", "prep", None, None, None)
+            ("_pre_post_processing", "pre_post_processing", "preposp", None, None, None)
         ]
         self.autoset_params()
 
         self._ratings = self._data.train_dict
 
-        self._model = Similarity(data=self._data, num_neighbors=self._num_neighbors, similarity=self._similarity, implicit=self._implicit, post_processing=self._post_processing, pre_processing=self._pre_processing)
+        self._model = Similarity(data=self._data, num_neighbors=self._num_neighbors, similarity=self._similarity, implicit=self._implicit, pre_post_processing=self._pre_post_processing)
 
     def get_single_recommendation(self, mask, k, *args):
         return {u: self._model.get_user_recs(u, mask, k) for u in self._ratings.keys()}
