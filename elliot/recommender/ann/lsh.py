@@ -320,7 +320,7 @@ class E2LSH(LSH):
         self.validate = validate
 
     def _hash(self, X):
-        X = np.transpose(X)
+        # X = np.transpose(X)
         # project the data onto the hyperplanes contained in A
         hvs = np.matmul(X, self.A)
         # add the bias term (we could also remove it)

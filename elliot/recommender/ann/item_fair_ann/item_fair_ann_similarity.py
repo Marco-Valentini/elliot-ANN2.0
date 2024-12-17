@@ -98,7 +98,7 @@ class LSHSimilarity(object):
             self._lsh_index.preprocess(self._URM.T.toarray())
         elif similarity == "euclidean":
             self._lsh_index.preprocess(self._URM.T.toarray())
-        elif similarity in ['jaccard']:
+        elif similarity == "jaccard":
             # self._similarity_matrix = (1 / (1 + pairwise_distances(self._URM.T.toarray(), metric=similarity)))
             self._lsh_index.preprocess(self._item_profiles)
         else:
@@ -106,19 +106,23 @@ class LSHSimilarity(object):
                              f"\nAllowed values are: {self.supported_similarities}, {self.supported_dissimilarities}."
                              f"\nPassed value was {similarity}\n")
         # now, based on the desired strategy, we compute the candidates for each item
+        if similarity == "jaccard":
+            query = self._item_profiles
+        else:
+            query = self._URM.T.toarray()
         if sampling_strategy == 'opt':
-            candidates = self._lsh_index.opt(Y=self._URM.T.toarray(), neighbors=self._num_neighbors, runs=1)
+            candidates = self._lsh_index.opt(Y=query, neighbors=self._num_neighbors, runs=1)
         elif sampling_strategy == 'uniform':
-            candidates = self._lsh_index.uniform_query(Y=self._URM.T.toarray(), neighbors=self._num_neighbors, runs=1)
+            candidates = self._lsh_index.uniform_query(Y=query, neighbors=self._num_neighbors, runs=1)
         elif sampling_strategy == 'weighted_uniform':
-            candidates = self._lsh_index.weighted_uniform_query(Y=self._URM.T.toarray(), neighbors=self._num_neighbors, runs=1)
+            candidates = self._lsh_index.weighted_uniform_query(Y=query, neighbors=self._num_neighbors, runs=1)
         elif sampling_strategy == 'approx_degree':
-            candidates = self._lsh_index.approx_degree_query(Y=self._URM.T.toarray(), neighbors=self._num_neighbors, runs=1)
+            candidates = self._lsh_index.approx_degree_query(Y=query, neighbors=self._num_neighbors, runs=1)
         elif sampling_strategy == 'rank':
-            candidates = self._lsh_index.rank_query_simulate(Y=self._URM.T.toarray(), neighbors=self._num_neighbors, runs=1)
+            candidates = self._lsh_index.rank_query_simulate(Y=query, neighbors=self._num_neighbors, runs=1)
         # TODO aggiungere sampling_strategy == 'no_sampling'/'all' dove prendiamo tutti
         elif sampling_strategy == 'no_sampling':
-            _, _, candidates, _, _ = self._lsh_index.preprocess_query(self._URM.T.toarray())
+            _, _, candidates, _, _ = self._lsh_index.preprocess_query(query)
         else:
             raise ValueError("Compute Similarity: value for parameter 'sampling_strategy' not recognized."
                              f"\nAllowed values are: {self.supported_sampling_strategy}."

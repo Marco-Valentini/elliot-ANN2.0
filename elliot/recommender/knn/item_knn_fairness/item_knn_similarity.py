@@ -48,7 +48,35 @@ class Similarity(object):
         print(f"\nSupported Similarities: {self.supported_similarities}")
         print(f"Supported Distances/Dissimilarities: {self.supported_dissimilarities}\n")
 
+        # save the old data to restore after resampling
+        if not hasattr(self._data, 'old_allunrated_mask'):
+            # save the original one
+            self._data.old_allunrated_mask = self._data.allunrated_mask.copy()
+            self._data.old_users = self._data.users.copy()
+            self._data._old_users = self._users.copy()
+            self._data.old_items = self._data.items.copy()
+            self._data._old_items = self._items.copy()
+            self._data._old_private_users = self._private_users.copy()
+            self._data._old_public_users = self._public_users.copy()
+            self._data._old_private_items = self._private_items.copy()
+            self._data._old_public_items = self._public_items.copy()
+
+        else:
+            # restore to the original one
+            self._data.allunrated_mask = self._data.old_allunrated_mask.copy()
+            self._data.items = self._data.old_items.copy()
+            self._items = self._data._old_items.copy()
+            self._data.users = self._data.old_users.copy()
+            self._users = self._data._old_users.copy()
+            self._private_items = self._data._old_private_items.copy()
+            self._public_items = self._data._old_public_items.copy()
+            self._private_users = self._data._old_private_users.copy()
+            self._public_users = self._data._old_public_users.copy()
+
         if self._pre_post_processing == None:
+            pass
+        elif self._pre_post_processing in ['value', 'parity']:
+            # avoid pre processing if a post processing will be applied
             pass
         elif self._pre_post_processing == 'interactions':
             # convert the train and test dict into private mappings
@@ -213,6 +241,9 @@ class Similarity(object):
             self._preds[rows_g1_test, cols_g1_test] = self._preds[rows_g1_test, cols_g1_test] + delta_train_g1
             self._preds[rows_g2_test, cols_g2_test] = self._preds[rows_g2_test, cols_g2_test] + delta_train_g2
         elif self._pre_post_processing is None:
+            pass
+        elif self._pre_post_processing in ['interactions', 'items']:
+            # avoid post processing if a pre processing has been applied
             pass
         else:
             raise ValueError(f"Post processing: {self._pre_post_processing} not recognized. Try with post_processing: ('value', 'parity')")
