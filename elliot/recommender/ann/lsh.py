@@ -361,7 +361,6 @@ class RandomProjection(LSH):
         hvs = np.matmul(X, self.A)
         # choose between 0 and 1 based on the sign of the result
         return (hvs > 0).astype(np.int32)
-        # TODO attenzione che in random projection noi prendevamo 0 o 1 sulla base del segno del dot product
         # qui abbiamo sempre valori interi ma tra -4 e 4
 
     def _get_hash_value(self, arr, idx):

@@ -1,17 +1,15 @@
 experiment:
   backend: pytorch
-  dataset: movielens_1M
+  dataset: lastfm_1k
   data_config:
     strategy: dataset
-    dataset_path: ../data/movielens_1m/dataset.tsv
+    dataset_path: ../../data/lastfm_1k/dataset.tsv
   prefiltering:
-    - strategy: global_threshold
-      threshold: 4
-      #TODO quale k-core?
+    - strategy: user_average
   binarize: True
   splitting:
     save_on_disk: True
-    save_folder: ../data/movielens_1m/filtered_data/
+    save_folder: ../../data/lastfm_1k/filtered_data/
     test_splitting:
       test_ratio: 0.2
       strategy: temporal_hold_out
@@ -20,7 +18,7 @@ experiment:
     cutoffs: 20 # [10, 20, 50]
     simple_metrics: [ nDCGRendle2020, Recall, HR, Precision, MAP, MRR ]
   gpu: 0
-  external_models_path: ../external/models/__init__.py
+  external_models_path: ../../external/models/__init__.py
   models:
     Random:
       meta:

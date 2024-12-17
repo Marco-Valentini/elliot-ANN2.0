@@ -6,7 +6,7 @@ import json
 from elliot.dataset.modular_loaders.abstract_loader import AbstractLoader
 
 
-class ItemPopularityUserActivity(AbstractLoader):
+class ItemPopularityUserTolerance(AbstractLoader):
     '''
     This dataloader has been added to include in the models the information about the clustering of the items based on their
     popularity, and the clustering of the users based on their activity on the platform
@@ -40,7 +40,7 @@ class ItemPopularityUserActivity(AbstractLoader):
 
     def create_namespace(self):
         ns = SimpleNamespace()
-        ns.__name__ = "ItemPopularityUserActivity"
+        ns.__name__ = "ItemPopularityUserTolerance"
         ns.object = self
         ns.feature_map_items = self.map_items
         ns.feature_map_users = self.map_users

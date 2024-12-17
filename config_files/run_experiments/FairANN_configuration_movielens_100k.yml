@@ -41,44 +41,44 @@ experiment:
   external_models_path: ../external/models/__init__.py
   #TODO cambiare tutti i save_recs a True
   models:
-#    Random:
-#      meta:
-#        verbose: True
-#        save_recs: False
-#      seed: 42
-#    external.MostPop:
-#      meta:
-#        verbose: True
-#        save_recs: True
-#        validation_metric: nDCG@10
-#    ItemKNN:
-#      meta:
-#        verbose: False
-#        save_recs: False
-#        validation_metric: nDCG@10
-#      neighbors: [10, 50, 100] # TODO discutere valori qui
-#      similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
-#      implementation: standard
-#    UserKNN:
-#      meta:
-#        verbose: False
-#        save_recs: False
-#        validation_metric: nDCG@10
-#      neighbors: [10, 50, 100] # TODO discutere valori qui
-#      similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
-#      implementation: standard
-#    ItemFairANN:
-#      meta:
-#        verbose: True
-#        save_recs: False
-#        validation_metric: nDCG@10
-#      neighbors: 10 #[10, 50, 100] # TODO discutere valori qui
-#      similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
-#      sampling_strategy: [no_sampling, uniform] # [no_sampling, uniform, weighted_uniform, rank, opt, approx_degree]
-#      validate: False # TODO questo non lo metterei
-#      n_hash: 3 # TODO discutere valori qui
-#      n_tables: 5 # TODO discutere valori qui
-#      similarity_threshold: 0.3 # TODO questo non lo metterei
+    Random:
+      meta:
+        verbose: True
+        save_recs: False
+      seed: 42
+    external.MostPop:
+      meta:
+        verbose: True
+        save_recs: True
+        validation_metric: nDCG@10
+    ItemKNN:
+      meta:
+        verbose: False
+        save_recs: False
+        validation_metric: nDCG@10
+      neighbors: [10, 50, 100] # TODO discutere valori qui
+      similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
+      implementation: standard
+    UserKNN:
+      meta:
+        verbose: False
+        save_recs: False
+        validation_metric: nDCG@10
+      neighbors: [10, 50, 100] # TODO discutere valori qui
+      similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
+      implementation: standard
+    ItemFairANN:
+      meta:
+        verbose: True
+        save_recs: False
+        validation_metric: nDCG@10
+      neighbors: 10 #[10, 50, 100] # TODO discutere valori qui
+      similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
+      sampling_strategy: [no_sampling, uniform, weighted_uniform, opt, approx_degree, rank]
+      validate: False # TODO questo non lo metterei
+      n_hash: 3 # TODO discutere valori qui
+      n_tables: 5 # TODO discutere valori qui
+      similarity_threshold: 0.3 # TODO questo non lo metterei
 #    UserFairANN:
 #      meta:
 #        verbose: True
@@ -114,36 +114,36 @@ experiment:
 #      n_hash: 3
 #      n_tables: 5
 #      similarity_threshold: 0.3
-#    ItemANNfaissLSH:
-#      meta:
-#        verbose: True
-#        save_recs: False
-#      neighbors: [10, 50, 100] # TODO discutere valori qui
-#      similarity: cosine #TODO qui potrebbe andare potenzialmente qualsiasi
-#      nbits: 3 # TODO discutere valori qui
-#    UserANNfaissLSH:
-#      meta:
-#        verbose: True
-#        save_recs: False
-#      neighbors: [10, 50, 100] # TODO discutere valori qui
-#      similarity: cosine #TODO qui potrebbe andare potenzialmente qualsiasi
-#      nbits: 3 # TODO discutere valori qui
-#    ItemANNOY:
-#      meta:
-#        verbose: True
-#        save_recs: True
-#      neighbors: [10, 50, 100]
-#      similarity: [angular, euclidean, manhattan, hamming, dot]
-#      n_trees: 3 # TODO discutere valori qui
-#      search_k: -1 # TODO discutere valori qui
-#    UserANNOY:
-#      meta:
-#        verbose: True
-#        save_recs: True
-#      neighbors: [10, 50, 100]
-#      similarity: [angular, euclidean, manhattan, hamming, dot]
-#      n_trees: 3 # TODO discutere valori qui
-#      search_k: -1 # TODO discutere valori qui
+    ItemANNfaissLSH:
+      meta:
+        verbose: True
+        save_recs: False
+      neighbors: [10, 50, 100] # TODO discutere valori qui
+      similarity: cosine #TODO qui potrebbe andare potenzialmente qualsiasi
+      nbits: 3 # TODO discutere valori qui
+    UserANNfaissLSH:
+      meta:
+        verbose: True
+        save_recs: False
+      neighbors: [10, 50, 100] # TODO discutere valori qui
+      similarity: cosine #TODO qui potrebbe andare potenzialmente qualsiasi
+      nbits: 3 # TODO discutere valori qui
+    ItemANNOY:
+      meta:
+        verbose: True
+        save_recs: True
+      neighbors: [10, 50, 100]
+      similarity: [angular, euclidean, manhattan, hamming, dot]
+      n_trees: 3 # TODO discutere valori qui
+      search_k: -1 # TODO discutere valori qui
+    UserANNOY:
+      meta:
+        verbose: True
+        save_recs: True
+      neighbors: [10, 50, 100]
+      similarity: [angular, euclidean, manhattan, hamming, dot]
+      n_trees: 3 # TODO discutere valori qui
+      search_k: -1 # TODO discutere valori qui
     ItemKNNfairness:
       meta:
         verbose: False

@@ -76,8 +76,8 @@ class Similarity(object):
             self._data.private_train_dict = {self._data.public_users.get(user): [self._data.public_items.get(item) for item in items] for user, items in self._data.train_dict.items()}
             self._data.private_test_dict = {self._data.public_users.get(user): [self._data.public_items.get(item) for item in items] for user, items in self._data.test_dict.items()}
             # read the information about the group and convert it into private IDs
-            g1 = self._data.side_information.ItemPopularityUserActivity.user_group_map['0']  # long-tail group
-            g2 = self._data.side_information.ItemPopularityUserActivity.user_group_map['1']  # most popular group
+            g1 = self._data.side_information.ItemPopularityUserTolerance.user_group_map['0']  # long-tail group
+            g2 = self._data.side_information.ItemPopularityUserTolerance.user_group_map['1']  # most popular group
             # map the public IDs to the private IDs
             g1 = [self._data.public_items.get(i) for i in g1]
             g2 = [self._data.public_items.get(i) for i in g2]
@@ -114,9 +114,9 @@ class Similarity(object):
             self._URM[rows_to_remove, cols_to_remove] = 0
         elif self._pre_post_processing == 'users':
             # count the users in the group 1
-            g1 = self._data.side_information.ItemPopularityUserActivity.user_group_map['0']  # long-tail group
+            g1 = self._data.side_information.ItemPopularityUserTolerance.user_group_map['0']  # long-tail group
             # count the users in the group 2
-            g2 = self._data.side_information.ItemPopularityUserActivity.user_group_map['1']  # most popular group
+            g2 = self._data.side_information.ItemPopularityUserTolerance.user_group_map['1']  # most popular group
             # sample the users to balance the 2 groups -> sampling without replacement
             if len(g1) < len(g2):
                 g2 = np.random.choice(g2, len(g1), replace=False)
@@ -184,7 +184,7 @@ class Similarity(object):
                 in self._data.test_dict.items()}
             # in the private train dict we have the user ID and the Item IDs with the given ratings
             # compute the average predicted rating for group 1 on training set
-            g1 = self._data.side_information.ItemPopularityUserActivity.user_group_map['0'] # long-tail group
+            g1 = self._data.side_information.ItemPopularityUserTolerance.user_group_map['0'] # long-tail group
             # convert the public IDs to the private IDs
             g1 = [self._data.public_users.get(i) for i in g1]
             # take from the train dict only the items belonging to group 1
@@ -196,7 +196,7 @@ class Similarity(object):
             # given the inverse test dict, I need to create a list of cells to access the predictions matrix
             g1_test_idx = [[user, item] for user, items in self._data.test_dict_g1.items() for item in items]
             # compute the average predicted rating for group 2 on training set
-            g2 = self._data.side_information.ItemPopularityUserActivity.user_group_map['1']  # most popular group
+            g2 = self._data.side_information.ItemPopularityUserTolerance.user_group_map['1']  # most popular group
             # convert the public IDs to the private IDs
             g2 = [self._data.public_users.get(i) for i in g2]
             # take from the train dict only the items belonging to group 1
