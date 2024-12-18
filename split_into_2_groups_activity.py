@@ -45,7 +45,7 @@ item_frequencies['group'] = pd.cut(item_frequencies['Frequency'], bins=item_bins
 
 # create a column for when the users/items are not split
 # user_frequencies['no_group'] = np.full(shape=user_frequencies.shape['UserID'], fill_value=0)
-# item_frequencies['no_group'] = np.full(shape=item_frequencies.shape['UserID'], fill_value=0)
+# item_frequencies['no_group'] = np.full(shape=item_frequencies.shape['ItemID'], fill_value=0)
 
 # create a reverse mapping groupID: [list of users/items belonging to that group]
 group_to_users = user_frequencies.groupby('group')['UserID'].apply(list).to_dict()
