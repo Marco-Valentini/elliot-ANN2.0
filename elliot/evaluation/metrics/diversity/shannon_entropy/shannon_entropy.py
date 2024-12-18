@@ -68,7 +68,7 @@ class ShannonEntropy(BaseMetric):
             self._item_count[i] = self._item_count.get(i, 0) + 1
             self._item_weights[i] = self._item_weights.get(i, 0) + (1 / user_norm)
 
-    def __sales_novelty(self, i):
+    def _sales_novelty(self, i):
         return -math.log(self._item_count[i] / self._free_norm) / self._ln2
 
     def eval(self):
@@ -80,6 +80,6 @@ class ShannonEntropy(BaseMetric):
         for u, u_r in self._recommendations.items():
             self.__user_se(u_r, self._cutoff)
 
-        return sum([w * self.__sales_novelty(i) for i, w in self._item_weights.items()])/len(self._recommendations)
+        return sum([w * self._sales_novelty(i) for i, w in self._item_weights.items()])/len(self._recommendations)
 
 

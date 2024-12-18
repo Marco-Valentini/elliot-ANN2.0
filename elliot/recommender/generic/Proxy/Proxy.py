@@ -33,6 +33,7 @@ class ProxyRecommender(RecMixin, BaseRecommenderModel):
     def train(self):
         print("Reading recommendations")
         self._recommendations = self.read_recommendations(self._path)
+        self._recommendations =  {k[0]:v for k,v in self._recommendations.items()}
 
         print("Evaluating recommendations")
         self.evaluate()
@@ -56,7 +57,7 @@ class ProxyRecommender(RecMixin, BaseRecommenderModel):
         recs = {}
         for u, user_recs in self._recommendations.items():
             user_cleaned_recs = []
-            user_candidate_items = candidate_items[u[0]]
+            user_candidate_items = candidate_items[u]
             for p, (item, prediction) in enumerate(user_recs):
                 if p >= k:
                     break
