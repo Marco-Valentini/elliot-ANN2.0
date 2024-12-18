@@ -89,7 +89,9 @@ class UserKNNfairness(RecMixin, BaseRecommenderModel):
         print(f"The similarity computation has taken: {end - start}")
 
         print(f"Transactions: {self._data.transactions}")
+        self._ratings = self._model._ratings
 
         self.evaluate()
 
         self._model.restore_items_users()
+        self._ratings = self._model._data._old_ratings
