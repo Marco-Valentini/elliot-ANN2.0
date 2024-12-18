@@ -11,27 +11,26 @@ experiment:
     complex_metrics:
       - metric: BiasDisparityBD
         user_clustering_name: UserTolerance
-        user_clustering_file: ../../data/amazon_books/user_no_groups.tsv #user_groups_4.tsv
+        user_clustering_file: ../../data/amazon_books/users_tolerance_3.tsv
         item_clustering_name: ItemPopularity
-        item_clustering_file: ../../data/amazon_books/item_groups_4.tsv #item_no_groups.tsv
+        item_clustering_file: ../../data/amazon_books/items_popularity_2.tsv
       - metric: BiasDisparityBR
         user_clustering_name: UserTolerance
-        user_clustering_file: ../../data/amazon_books/user_no_groups.tsv #user_groups_4.tsv
+        user_clustering_file: ../../data/amazon_books/users_tolerance_3.tsv
         item_clustering_name: ItemPopularity
-        item_clustering_file: ../../data/amazon_books/item_groups_4.tsv #item_no_groups.tsv
+        item_clustering_file: ../../data/amazon_books/items_popularity_2.tsv
       - metric: BiasDisparityBS
         user_clustering_name: UserTolerance
-        user_clustering_file: ../../data/amazon_books/user_no_groups.tsv #user_groups_4.tsv
+        user_clustering_file: ../../data/amazon_books/users_tolerance_3.tsv
         item_clustering_name: ItemPopularity
-        item_clustering_file: ../../data/amazon_books/item_groups_4.tsv #item_no_groups.tsv
+        item_clustering_file: ../../data/amazon_books/items_popularity_2.tsv
       - metric: REO
         clustering_name: ItemPopularity
-        clustering_file: ../../data/amazon_books/item_groups_4.tsv
+        clustering_file: ../../data/amazon_books/items_popularity_2.tsv
       - metric: RSP
         clustering_name: ItemPopularity
-        clustering_file: ../../data/amazon_books/item_groups_4.tsv
+        clustering_file: ../../data/amazon_books/items_popularity_2.tsv
   gpu: 0
-  external_models_path: ../../external/models/__init__.py
   models:
     RecommendationFolder:
         folder: ../../results/amazon_books_item/

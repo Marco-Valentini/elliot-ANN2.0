@@ -56,7 +56,7 @@ class ProxyRecommender(RecMixin, BaseRecommenderModel):
         recs = {}
         for u, user_recs in self._recommendations.items():
             user_cleaned_recs = []
-            user_candidate_items = candidate_items[u]
+            user_candidate_items = candidate_items[u[0]]
             for p, (item, prediction) in enumerate(user_recs):
                 if p >= k:
                     break

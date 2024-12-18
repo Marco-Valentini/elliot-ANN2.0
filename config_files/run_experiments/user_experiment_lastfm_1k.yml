@@ -6,10 +6,10 @@ experiment:
     test_path: ../../data/lastfm_1k/filtered_data/0/test.tsv
     side_information:
       - dataloader: ItemPopularityUserTolerance
-        user_file: ../../data/lastfm_1k/user_tolerance_groups_2.tsv
-        item_file: ../../data/lastfm_1k/item_popularity_groups_2.tsv
-        user_group_file: ../../data/lastfm_1k/group2_to_users.json
-        item_group_file: ../../data/lastfm_1k/group2_to_items.json
+        user_file: ../../data/lastfm_1k/users_tolerance_2.tsv
+        item_file: ../../data/lastfm_1k/items_popularity_2.tsv
+        user_group_file: ../../data/lastfm_1k/group_tolerance_2_to_users.json
+        item_group_file: ../../data/lastfm_1k/group_popularity_2_to_items.json
   top_k: 50
   path_output_rec_result: ../../results/lastfm_1k_user/
   evaluation:

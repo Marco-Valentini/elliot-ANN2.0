@@ -6,10 +6,10 @@ experiment:
     test_path: ../../data/movielens_100k/filtered_data/0/test.tsv
     side_information:
       - dataloader: ItemPopularityUserTolerance
-        user_file: ../../data/movielens_100k/user_groups_2.tsv
-        item_file: ../../data/movielens_100k/item_groups_2.tsv
-        user_group_file: ../../data/movielens_100k/group2_to_users.json
-        item_group_file: ../../data/movielens_100k/group2_to_items.json
+        user_file: ../../data/movielens_100k/users_tolerance_2.tsv
+        item_file: ../../data/movielens_100k/items_popularity_2.tsv
+        user_group_file: ../../data/movielens_100k/group_tolerance_2_to_users.json
+        item_group_file: ../../data/movielens_100k/group_popularity_2_to_items.json
   top_k: 50
   path_output_rec_result: ../../results/movielens_100k_user/
   path_output_rec_weight: ../../results/movielens_100k_user/
