@@ -44,7 +44,7 @@ print("Assigning the labels to each bin")
 item_frequencies['group'] = pd.cut(item_frequencies['Frequency'], bins=item_bins, labels=item_labels, right=True)
 
 # save the tsv file with the grouping of ID-group
-item_frequencies[['ItemID', 'group']].to_csv(f'data/{dataset}/item_popularity_2.tsv', sep='\t', header=None, index=None)
+item_frequencies[['ItemID', 'group']].to_csv(f'data/{dataset}/items_popularity_2.tsv', sep='\t', header=None, index=None)
 
 # create a reverse mapping groupID: [list of users/items belonging to that group]
 group_to_items = item_frequencies.groupby('group')['ItemID'].apply(list).to_dict()
@@ -66,7 +66,7 @@ print("Assigning the labels to each bin")
 item_frequencies['group_3'] = pd.cut(item_frequencies['Frequency'], bins=item_bins_3, labels=item_labels_3, right=True)
 
 # save the tsv file with the grouping of ID-group
-item_frequencies[['ItemID', 'group_3']].to_csv(f'data/{dataset}/item_popularity_3.tsv', sep='\t', header=None, index=None)
+item_frequencies[['ItemID', 'group_3']].to_csv(f'data/{dataset}/items_popularity_3.tsv', sep='\t', header=None, index=None)
 
 # create a reverse mapping groupID: [list of users/items belonging to that group]
 group_to_items_3 = item_frequencies.groupby('group_3')['ItemID'].apply(list).to_dict()
@@ -146,8 +146,8 @@ user_tolerances_2['no_group'] = np.full(shape=user_tolerances_2.shape[0], fill_v
 item_frequencies['no_group'] = np.full(shape=item_frequencies.shape[0], fill_value=0)
 
 # save the dataset without grouping
-user_tolerances_2[["UserID", "no_group"]].to_csv(f"data/{dataset}/user_no_groups.tsv", sep="\t", header=None, index=None)
-item_frequencies[["ItemID", "no_group"]].to_csv(f'data/{dataset}/item_no_groups.tsv', sep='\t', header=None, index=None)
+user_tolerances_2[["UserID", "no_group"]].to_csv(f"data/{dataset}/users_no_groups.tsv", sep="\t", header=None, index=None)
+item_frequencies[["ItemID", "no_group"]].to_csv(f'data/{dataset}/items_no_groups.tsv', sep='\t', header=None, index=None)
 
 
 

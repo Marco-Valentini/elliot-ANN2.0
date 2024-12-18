@@ -6,8 +6,8 @@ experiment:
     test_path: ../../data/amazon_books/filtered_data/0/test.tsv
     side_information:
       - dataloader: ItemPopularityUserTolerance
-        user_file: ../../data/amazon_books/user_tolerance_groups_2.tsv
-        item_file: ../../data/amazon_books/item_popularity_groups_2.tsv
+        user_file: ../../data/amazon_books/users_tolerance_2.tsv
+        item_file: ../../data/amazon_books/item_popularity__2.tsv
         user_group_file: ../../data/amazon_books/group2_to_users.json
         item_group_file: ../../data/amazon_books/group2_to_items.json
   top_k: 50
