@@ -11,9 +11,9 @@ experiment:
         user_group_file: ../data/lastfm_1k/group_tolerance_2_to_users.json
         item_group_file: ../data/lastfm_1k/group_popularity_2_to_items.json
   top_k: 50
-  path_output_rec_result: ./results/lastfm_1k_item/
-  path_output_rec_weight: ./results/lastfm_1k_item/
-  path_output_rec_performance: ./results/lastfm_1k_item/
+  path_output_rec_result: ./results/lastfm_1k_item/recs/
+  path_output_rec_weight: ./results/lastfm_1k_item/weights/
+  path_output_rec_performance: ./results/lastfm_1k_item/performance/
   path_log_folder: ../log/lastfm_1k_item/
   evaluation:
     cutoffs: [ 5, 10, 20 ]

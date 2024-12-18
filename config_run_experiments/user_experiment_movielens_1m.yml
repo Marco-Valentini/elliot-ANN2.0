@@ -11,9 +11,9 @@ experiment:
         user_group_file: ../data/movielens_1m/group_tolerance_2_to_users.json
         item_group_file: ../data/movielens_1m/group_popularity_2_to_items.json
   top_k: 50
-  path_output_rec_result: ./results/movielens_1m_user/
-  path_output_rec_weight: ./results/movielens_1m_user/
-  path_output_rec_performance: ./results/movielens_1m_user/
+  path_output_rec_result: ./results/movielens_1m_user/recs/
+  path_output_rec_weight: ./results/movielens_1m_user/weights/
+  path_output_rec_performance: ./results/movielens_1m_user/performance/
   path_log_folder: ../log/movielens_1m_user/
   evaluation:
     cutoffs: [5, 10, 20]

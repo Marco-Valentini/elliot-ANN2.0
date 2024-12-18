@@ -11,9 +11,9 @@ experiment:
         user_group_file: ../data/amazon_books/group_tolerance_2_to_users.json
         item_group_file: ../data/amazon_books/group_popularity_2_to_items.json
   top_k: 50
-  path_output_rec_result: ./results/amazon_books_user/
-  path_output_rec_weight: ./results/amazon_books_user/
-  path_output_rec_performance: ./results/amazon_books_user/
+  path_output_rec_result: ./results/amazon_books_user/recs/
+  path_output_rec_weight: ./results/amazon_books_user/weights/
+  path_output_rec_performance: ./results/amazon_books_user/performance/
   path_log_folder: ../log/amazon_books_user/
   evaluation:
     cutoffs: [5, 10, 20]
