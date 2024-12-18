@@ -43,7 +43,7 @@ class Similarity(object):
         print(f"Supported Distances/Dissimilarities: {self.supported_dissimilarities}\n")
 
         # save the old data to restore after resampling
-        if not hasattr(self._data, 'old_allunrated_mask') or self._pre_post_processing == 'users':
+        if not hasattr(self._data, 'old_allunrated_mask'):
             # save the original one
             self._data.old_allunrated_mask = self._data.allunrated_mask.copy()
             self._data.old_items = self._data.items.copy()
@@ -54,6 +54,7 @@ class Similarity(object):
             self._data._old_public_users = self._public_users.copy()
             self._data._old_private_items = self._private_items.copy()
             self._data._old_public_items = self._public_items.copy()
+            self._data._old_ratings = self._ratings.copy()
         else:
             # restore to the original one
             self._data.allunrated_mask = self._data.old_allunrated_mask.copy()
@@ -65,6 +66,7 @@ class Similarity(object):
             self._public_users = self._data._old_public_users.copy()
             self._private_items = self._data._old_private_items.copy()
             self._public_items = self._data._old_public_items.copy()
+            self._ratings = self._data._old_ratings.copy()
 
         if self._pre_post_processing == None:
             pass
@@ -297,3 +299,16 @@ class Similarity(object):
     def save_weights(self, path):
         with open(path, "wb") as f:
             pickle.dump(self.get_model_state(), f)
+
+    def restore_items_users(self):
+            # restore to the original one
+            self._data.allunrated_mask = self._data.old_allunrated_mask.copy()
+            self._data.items = self._data.old_items.copy()
+            self._items = self._data._old_items.copy()
+            self._data.users = self._data.old_users.copy()
+            self._users = self._data._old_users.copy()
+            self._private_items = self._data._old_private_items.copy()
+            self._public_items = self._data._old_public_items.copy()
+            self._private_users = self._data._old_private_users.copy()
+            self._public_users = self._data._old_public_users.copy()
+            self._ratings = self._data._old_ratings.copy()

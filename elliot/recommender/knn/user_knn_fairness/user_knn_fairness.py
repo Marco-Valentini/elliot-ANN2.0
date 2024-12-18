@@ -90,8 +90,6 @@ class UserKNNfairness(RecMixin, BaseRecommenderModel):
 
         print(f"Transactions: {self._data.transactions}")
 
-        self._ratings = self._model._ratings
-        self._data.public_users = self._model._public_users
-        self._data.private_users = self._model._private_users
         self.evaluate()
 
+        self._model.restore_items_users()

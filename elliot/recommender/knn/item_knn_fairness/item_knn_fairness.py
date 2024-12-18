@@ -46,6 +46,7 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
           pre_post_processing: parity/interactions
 
     """
+
     @init_charger
     def __init__(self, data, config, params, *args, **kwargs):
 
@@ -59,7 +60,8 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
 
         self._ratings = self._data.train_dict
 
-        self._model = Similarity(data=self._data, num_neighbors=self._num_neighbors, similarity=self._similarity, implicit=self._implicit,  pre_post_processing=self._pre_post_processing)
+        self._model = Similarity(data=self._data, num_neighbors=self._num_neighbors, similarity=self._similarity,
+                                 implicit=self._implicit, pre_post_processing=self._pre_post_processing)
 
     def get_single_recommendation(self, mask, k, *args):
         return {u: self._model.get_user_recs(u, mask, k) for u in self._ratings.keys()}
@@ -91,3 +93,5 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
         print(f"Transactions: {self._data.transactions}")
 
         self.evaluate()
+
+        self._model.restore_items_users()

@@ -2,20 +2,23 @@ experiment:
   dataset: amazon_books
   data_config:
     strategy: fixed
-    train_path: ../../data/amazon_books/filtered_data/0/train.tsv
-    test_path: ../../data/amazon_books/filtered_data/0/test.tsv
+    train_path: ../data/amazon_books/filtered_data/0/train.tsv
+    test_path: ../data/amazon_books/filtered_data/0/test.tsv
     side_information:
       - dataloader: ItemPopularityUserTolerance
-        user_file: ../../data/amazon_books/users_tolerance_2.tsv
-        item_file: ../../data/amazon_books/items_popularity_2.tsv
-        user_group_file: ../../data/amazon_books/group_tolerance_2_to_users.json
-        item_group_file: ../../data/amazon_books/group_popularity_2_to_items.json
+        user_file: ../data/amazon_books/users_tolerance_2.tsv
+        item_file: ../data/amazon_books/items_popularity_2.tsv
+        user_group_file: ../data/amazon_books/group_tolerance_2_to_users.json
+        item_group_file: ../data/amazon_books/group_popularity_2_to_items.json
   top_k: 50
-  path_output_rec_result: ../../results/amazon_books_user/
+  path_output_rec_result: ./results/amazon_books_item/
+  path_output_rec_weight: ./results/amazon_books_item/
+  path_output_rec_performance: ./results/amazon_books_item/
+  path_log_folder: ../log/amazon_books_item/
   evaluation:
-    cutoffs: [5, 10, 20]
+    cutoffs: [ 5, 10, 20 ]
     simple_metrics: [ nDCGRendle2020, Recall, Precision, MAP, ItemCoverage, Gini ]
-  external_models_path: ../../external/models/__init__.py
+  external_models_path: ../external/models/__init__.py
   models:
     Random:
       meta:
@@ -26,7 +29,7 @@ experiment:
       meta:
         verbose: True
         save_recs: True
-    UserKNN:
+    ItemKNN:
       meta:
         verbose: True
         save_recs: True
@@ -35,7 +38,7 @@ experiment:
       neighbors: [ 50, 100, 250, 500 ]
       similarity: [ cosine, jaccard, euclidean ]
       implementation: standard
-    UserFairANN:
+    ItemFairANN:
       meta:
         verbose: True
         save_recs: True
@@ -46,7 +49,7 @@ experiment:
       sampling_strategy: [ no_sampling, uniform, weighted_uniform, opt, approx_degree, rank ]
       n_hash: [ 2, 4, 6, 8 ]
       n_tables: [ 1,2,4,8 ]
-    UserANNfaissLSH:
+    ItemANNfaissLSH:
       meta:
         verbose: True
         save_recs: True
@@ -55,7 +58,7 @@ experiment:
       neighbors: [ 50, 100, 250, 500 ]
       similarity: cosine
       nbits: [2, 4, 6, 8]
-    UserANNOY:
+    ItemANNOY:
       meta:
         verbose: True
         save_recs: True
@@ -65,7 +68,7 @@ experiment:
       similarity: [ angular, euclidean, hamming ] # hamming distance is the most similar to the jaccard one
       n_trees: [1,3,5]
       search_k: [-1,5,10]
-    UserKNNfairness:
+    ItemKNNfairness:
       meta:
         verbose: True
         save_recs: True

@@ -1,22 +1,24 @@
 experiment:
-  dataset: movielens_1m
+  dataset: lastfm_1k
   data_config:
     strategy: fixed
-    train_path: ../../data/movielens_1m/filtered_data/0/train.tsv
-    test_path: ../../data/movielens_1m/filtered_data/0/test.tsv
+    train_path: ../data/lastfm_1k/filtered_data/0/train.tsv
+    test_path: ../data/lastfm_1k/filtered_data/0/test.tsv
     side_information:
       - dataloader: ItemPopularityUserTolerance
-        user_file: ../../data/movielens_1m/users_tolerance_2.tsv
-        item_file: ../../data/movielens_1m/items_popularity_2.tsv
-        user_group_file: ../../data/movielens_1m/group_tolerance_2_to_users.json
-        item_group_file: ../../data/movielens_1m/group_popularity_2_to_items.json
+        user_file: ../data/lastfm_1k/users_tolerance_2.tsv
+        item_file: ../data/lastfm_1k/items_popularity_2.tsv
+        user_group_file: ../data/lastfm_1k/group_tolerance_2_to_users.json
+        item_group_file: ../data/lastfm_1k/group_popularity_2_to_items.json
   top_k: 50
-  path_output_rec_result: ../../results/movielens_1m_user/
-
+  path_output_rec_result: ./results/lastfm_1k_user/
+  path_output_rec_weight: ./results/lastfm_1k_user/
+  path_output_rec_performance: ./results/lastfm_1k_user/
+  path_log_folder: ../log/lastfm_1k_user/
   evaluation:
     cutoffs: [5, 10, 20]
     simple_metrics: [ nDCGRendle2020, Recall, Precision, MAP, ItemCoverage, Gini ]
-  external_models_path: ../../external/models/__init__.py
+  external_models_path: ../external/models/__init__.py
   models:
     Random:
       meta:
