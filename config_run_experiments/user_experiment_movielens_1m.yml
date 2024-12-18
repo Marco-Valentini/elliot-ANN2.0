@@ -47,7 +47,7 @@ experiment:
       neighbors: [ 50, 100, 250, 500 ]
       similarity: [ cosine, jaccard, euclidean ]
       sampling_strategy: [ no_sampling, uniform, weighted_uniform, opt, approx_degree, rank ]
-      n_hash: [ 2, 4, 6, 8 ]
+      n_hash: [ 2, 3, 4, 5 ]
       n_tables: [ 1,2,4,8 ]
     UserANNfaissLSH:
       meta:
