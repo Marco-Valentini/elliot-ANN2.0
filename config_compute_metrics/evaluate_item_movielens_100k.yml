@@ -5,9 +5,9 @@ experiment:
     train_path: ../data/movielens_100k/filtered_data/0/train.tsv
     test_path: ../data/movielens_100k/filtered_data/0/test.tsv
   top_k: 50
-  path_output_rec_result: ./results/movielens_100k_item/
-  path_output_rec_weight: ./results/movielens_100k_item/
-  path_output_rec_performance: ./results/movielens_100k_item/
+  path_output_rec_result: ./results/movielens_100k_item/recs/
+  path_output_rec_weight: ./results/movielens_100k_item/weights/
+  path_output_rec_performance: ./results/movielens_100k_item/performance/
   path_log_folder: ../log/movielens_100k_item/
   evaluation:
     cutoffs: [ 1,5,10,20 ]
@@ -37,4 +37,4 @@ experiment:
   gpu: 0
   models:
     RecommendationFolder:
-        folder: ./results/movielens_100k_item/
+        folder: ./results/movielens_100k_item/recs/

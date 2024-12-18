@@ -5,7 +5,10 @@ experiment:
     train_path: ../data/movielens_1m/filtered_data/0/train.tsv
     test_path: ../data/movielens_1m/filtered_data/0/test.tsv
   top_k: 50
-    #TODO add results paths
+  path_output_rec_result: ./results/movielens_1m_user/recs/
+  path_output_rec_weight: ./results/movielens_1m_user/weights/
+  path_output_rec_performance: ./results/movielens_1m_user/performance/
+  path_log_folder: ../log/movielens_1m_user/
   evaluation:
     cutoffs: [ 1,5,10,20 ]
     simple_metrics: [ nDCGRendle2020, Recall, HR, Precision, MAP, MRR, ItemCoverage, ACLT, Gini, SEntropy, EFD, EPC, PopREO, PopRSP ]
@@ -34,4 +37,4 @@ experiment:
   gpu: 0
   models:
     RecommendationFolder:
-        folder: ./results/movielens_1m_user/
+        folder: ./results/movielens_1m_user/recs/

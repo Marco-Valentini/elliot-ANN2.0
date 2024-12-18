@@ -5,9 +5,9 @@ experiment:
     train_path: ../data/movielens_100k/filtered_data/0/train.tsv
     test_path: ../data/movielens_100k/filtered_data/0/test.tsv
   top_k: 50
-  path_output_rec_result: ./results/movielens_100k_user/
-  path_output_rec_weight: ./results/movielens_100k_user/
-  path_output_rec_performance: ./results/movielens_100k_user/
+  path_output_rec_result: ./results/movielens_100k_user/recs/
+  path_output_rec_weight: ./results/movielens_100k_user/weights/
+  path_output_rec_performance: ./results/movielens_100k_user/performance/
   path_log_folder: ../log/movielens_100k_user/
   evaluation:
     cutoffs: [ 1,5,10,20 ]
@@ -30,11 +30,11 @@ experiment:
         item_clustering_file: ../data/movielens_100k/items_popularity_2.tsv
       - metric: REO
         clustering_name: ItemPopularity
-        clustering_file: ../data/amazon_music/items_popularity_2.tsv
+        clustering_file: ../data/movielens_100k/items_popularity_2.tsv
       - metric: RSP
         clustering_name: ItemPopularity
-        clustering_file: ../data/amazon_music/items_popularity_2.tsv
+        clustering_file: ../data/movielens_100k/items_popularity_2.tsv
   gpu: 0
   models:
     RecommendationFolder:
-        folder: ./results/movielens_100k_user/
+        folder: ./results/movielens_100k_user/recs/
