@@ -7,4 +7,4 @@ run_experiment("config_run_experiments/user_experiment_movielens_1m.yml")
 
 run_experiment("config_run_experiments/user_experiment_lastfm_1k.yml")
 
-run_experiment("config_run_experiments/user_experiment_amazon_books.yml")
+# run_experiment("config_run_experiments/user_experiment_amazon_books.yml")
