@@ -8,6 +8,6 @@ from elliot.run import run_experiment
 print("Done! We are now starting preprocessing of last fm 1K dataset")
 run_experiment("config_preprocess_dataset/preprocess_lastfm_1K.yml")
 
-# preprocess amazon books dataset
-print("Done! We are now starting preprocessing of amazon books dataset")
-run_experiment("config_preprocess_dataset/preprocess_amazon_books.yml")
+# # preprocess amazon books dataset
+# print("Done! We are now starting preprocessing of amazon books dataset")
+# run_experiment("config_preprocess_dataset/preprocess_amazon_books.yml")
