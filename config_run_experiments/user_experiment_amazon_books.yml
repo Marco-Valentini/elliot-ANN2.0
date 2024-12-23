@@ -76,4 +76,4 @@ experiment:
         validation_metric: nDCGRendle2020@20
       neighbors: [ 50, 100, 250, 500 ]
       similarity: [ cosine, jaccard, euclidean ]
-      pre_post_processing: [ parity, interactions, items ]
+      pre_post_processing: [ parity, interactions, users ]
