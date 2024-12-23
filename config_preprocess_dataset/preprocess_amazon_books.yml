@@ -7,6 +7,8 @@ experiment:
   prefiltering:
     - strategy: global_threshold
       threshold: 4
+    - strategy: iterative_k_core
+      core: 5
   binarize: True
   splitting:
     save_on_disk: True

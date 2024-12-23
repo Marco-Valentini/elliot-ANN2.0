@@ -15,17 +15,17 @@ experiment:
     complex_metrics:
       - metric: BiasDisparityBD
         user_clustering_name: UserTolerance
-        user_clustering_file: ../data/lastfm_1k/users_tolerance_3.tsv
+        user_clustering_file: ../data/lastfm_1k/users_tolerance_2.tsv
         item_clustering_name: ItemPopularity
         item_clustering_file: ../data/lastfm_1k/items_popularity_2.tsv
       - metric: BiasDisparityBR
         user_clustering_name: UserTolerance
-        user_clustering_file: ../data/lastfm_1k/users_tolerance_3.tsv
+        user_clustering_file: ../data/lastfm_1k/users_tolerance_2.tsv
         item_clustering_name: ItemPopularity
         item_clustering_file: ../data/lastfm_1k/items_popularity_2.tsv
       - metric: BiasDisparityBS
         user_clustering_name: UserTolerance
-        user_clustering_file: ../data/lastfm_1k/users_tolerance_3.tsv
+        user_clustering_file: ../data/lastfm_1k/users_tolerance_2.tsv
         item_clustering_name: ItemPopularity
         item_clustering_file: ../data/lastfm_1k/items_popularity_2.tsv
       - metric: REO
