@@ -6,6 +6,8 @@ experiment:
     dataset_path: ../data/lastfm_1k/dataset.tsv
   prefiltering:
     - strategy: user_average
+    - strategy: iterative_k_core
+      core: 5
   binarize: True
   splitting:
     save_on_disk: True
