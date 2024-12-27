@@ -5,7 +5,6 @@
 # ones interested in the long tail, for the 3 groups we have 20% of the users interested in best-seller items,
 # 60% interested in the mid-tail and 20% in the long-tail
 
-# TODO debug e capire se funziona
 # import the required libraries
 import pandas as pd
 import numpy as np
