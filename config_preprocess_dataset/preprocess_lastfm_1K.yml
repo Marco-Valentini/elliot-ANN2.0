@@ -7,7 +7,7 @@ experiment:
   prefiltering:
     - strategy: user_average
     - strategy: iterative_k_core
-      core: 6
+      core: 8
   binarize: True
   splitting:
     save_on_disk: True
