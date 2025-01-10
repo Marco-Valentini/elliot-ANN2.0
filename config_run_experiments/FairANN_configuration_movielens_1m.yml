@@ -72,7 +72,7 @@ experiment:
         validation_metric: nDCG@10
       neighbors: 50 # TODO discutere valori qui
       similarity: [cosine, jaccard, euclidean] # TODO discutere valori qui
-      sampling_strategy: [no_sampling, uniform, weighte_uniform, rank, opt, approx_degree]
+      sampling_strategy: [no_sampling, uniform, weighted_uniform, rank, opt, approx_degree]
       validate: False # TODO questo non lo metterei
       n_hash: 3 # TODO discutere valori qui
       n_tables: 5 # TODO discutere valori qui
