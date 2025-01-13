@@ -9,7 +9,7 @@ warnings.filterwarnings("ignore")
 # read the dataset
 parser = argparse.ArgumentParser(description="Run a script to run experiments on Amazon Books dataset.")
 parser.add_argument('--type', type=str, default='item', choices=['item', 'user'])
-parser.add_argument('--version', type=int, default=1, choices=[1, 2, 3, 4, 5, 6, 7])
+parser.add_argument('--version', type=str, default='1a')
 args = parser.parse_args()
 
 # take the type of experiment the input arguments
