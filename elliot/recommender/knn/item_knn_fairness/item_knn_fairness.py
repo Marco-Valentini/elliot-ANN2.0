@@ -54,14 +54,18 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
             ("_num_neighbors", "neighbors", "nn", 40, int, None),
             ("_similarity", "similarity", "sim", "cosine", None, None),
             ("_implicit", "implicit", "bin", False, None, None),
-            ("_pre_post_processing", "pre_post_processing", "preposp", None, None, None)
+            ("_pre_post_processing", "pre_post_processing", "preposp", None, None, None),
+            ("_asymmetric_alpha", "asymmetric_alpha", "asymalpha", False, None, lambda x: x if x else ""),
+            ("_tversky_alpha", "tversky_alpha", "tvalpha", False, None, lambda x: x if x else ""),
+            ("_tversky_beta", "tversky_beta", "tvbeta", False, None, lambda x: x if x else "")
         ]
         self.autoset_params()
 
         self._ratings = self._data.train_dict
 
         self._model = Similarity(data=self._data, num_neighbors=self._num_neighbors, similarity=self._similarity,
-                                 implicit=self._implicit, pre_post_processing=self._pre_post_processing)
+                                 implicit=self._implicit, pre_post_processing=self._pre_post_processing, alpha=self._asymmetric_alpha,
+                                     tversky_alpha=self._tversky_alpha, tversky_beta=self._tversky_beta)
 
     def get_single_recommendation(self, mask, k, *args):
         return {u: self._model.get_user_recs(u, mask, k) for u in self._ratings.keys()}

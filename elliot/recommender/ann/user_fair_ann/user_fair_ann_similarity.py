@@ -133,11 +133,11 @@ class LSHSimilarity(object):
         # TODO: il sampling effettuato è con replacement, quindi abbiamo meno di k vicini -> pensare ad una soluzione
         # candidates is a dictionary {ItemID:[ID of candidate items to be similar]}, we need to use it to compute the similarity matrix
         if similarity == "cosine":
-            similarity_function = cosine_similarity
+            similarity_function = lambda a, b: (1 + pairwise_distances(a,b, metric="cosine", n_jobs=-1))
         elif similarity == "euclidean":
-            similarity_function = lambda a, b: 1 / (1 + euclidean_distances(a, b))
+            similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="euclidean", n_jobs=-1))
         elif similarity == "jaccard":
-            similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a, b, metric="jaccard"))
+            similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="jaccard", n_jobs=-1))
         if sampling_strategy == 'no_sampling':
             for item, neighbors in enumerate(candidates):
                 # Get the representation vector for the current item

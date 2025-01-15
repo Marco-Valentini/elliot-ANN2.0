@@ -85,7 +85,7 @@ class LSHfaissSimilarity(object):
         # candidates is a 2-d Numpy array, the i-th row contains the neighbors of the i-th item
         # we need to use it to compute the similarity matrix
         if similarity == "cosine":
-            similarity_function = cosine_similarity
+            similarity_function = lambda a, b: (1 + pairwise_distances(a, b, metric="cosine", n_jobs=-1))
         else:
             raise ValueError("Compute Similarity: value for parameter 'similarity' not recognized."
                              f"\nAllowed values are: {self.supported_similarities}, {self.supported_dissimilarities}."

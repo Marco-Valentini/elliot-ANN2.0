@@ -4,6 +4,7 @@ import numpy as np
 from scipy import sparse
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances, haversine_distances, chi2_kernel, manhattan_distances
 from sklearn.metrics import pairwise_distances
+import similaripy as sim
 import random
 
 
@@ -12,13 +13,16 @@ class Similarity(object):
     Simple kNN class
     """
 
-    def __init__(self, data, num_neighbors, similarity, implicit, pre_post_processing):
+    def __init__(self, data, num_neighbors, similarity, implicit, pre_post_processing, **kwargs):
         self._data = data
         self._ratings = data.train_dict
         self._num_neighbors = num_neighbors
         self._similarity = similarity
         self._implicit = implicit
         self._pre_post_processing = pre_post_processing
+        self._alpha = kwargs['alpha']
+        self._tversky_alpha = kwargs['tversky_alpha']
+        self._tversky_beta = kwargs['tversky_beta']
 
         if self._implicit:
             self._URM = self._data.sp_i_train
@@ -145,32 +149,74 @@ class Similarity(object):
         else:
             raise ValueError(f"Pre processing: {self._pre_post_processing} not recognized. Try with pre_processing: ('interactions', 'users')")
 
+        # compute the similarity matrix with similaripy to speed up the process
+        if self._similarity == "cosine":
+            W_sparse = sim.cosine(self._URM, k=self._num_neighbors, format_output='csr')
+        elif self._similarity == "asym":
+            W_sparse = sim.asymmetric_cosine(self._URM, alpha=self._alpha, k=self._num_neighbors, format_output='csr')
+        elif self._similarity == "dot":
+            W_sparse = sim.dot_product(self._URM, k=self._num_neighbors, format_output='csr')
+        elif self._similarity == "jaccard":
+            W_sparse = sim.jaccard(self._URM, k=self._num_neighbors, binary=True, format_output='csr')
+        elif self._similarity == "dice":
+            W_sparse = sim.dice(self._URM, k=self._num_neighbors, binary=True, format_output='csr')
+        elif self._similarity == "tversky":
+            W_sparse = sim.tversky(self._URM, k=self._num_neighbors, alpha=self._tversky_alpha,
+                                   beta=self._tversky_beta, binary=True, format_output='csr')
+        elif self._similarity == "euclidean":
 
+            self._similarity_matrix = np.empty((len(self._users), len(self._users)))
 
-        self._similarity_matrix = np.empty((len(self._users), len(self._users)))
+            # self.process_similarity(self._similarity)
+            self._similarity_matrix = (1 / (1 + euclidean_distances(self._URM))) # avoid the function call
 
-        self.process_similarity(self._similarity)
+            data, rows_indices, cols_indptr = [], [], []
 
-        data, rows_indices, cols_indptr = [], [], []
+            column_row_index = np.arange(len(self._users), dtype=np.int32)
 
-        column_row_index = np.arange(len(self._users), dtype=np.int32)
+            for user_idx in range(len(self._users)):
+                cols_indptr.append(len(data))
+                column_data = self._similarity_matrix[:, user_idx]
 
-        for user_idx in range(len(self._users)):
+                non_zero_data = column_data != 0
+
+                idx_sorted = np.argsort(column_data[non_zero_data])  # sort by column
+                top_k_idx = idx_sorted[-self._num_neighbors:]
+
+                data.extend(column_data[non_zero_data][top_k_idx])
+                rows_indices.extend(column_row_index[non_zero_data][top_k_idx])
+
             cols_indptr.append(len(data))
-            column_data = self._similarity_matrix[:, user_idx]
 
-            non_zero_data = column_data != 0
+            W_sparse = sparse.csc_matrix((data, rows_indices, cols_indptr),
+                                         shape=(len(self._users), len(self._users)), dtype=np.float32).tocsr()
+            del self._similarity_matrix
 
-            idx_sorted = np.argsort(column_data[non_zero_data])  # sort by column
-            top_k_idx = idx_sorted[-self._num_neighbors:]
 
-            data.extend(column_data[non_zero_data][top_k_idx])
-            rows_indices.extend(column_row_index[non_zero_data][top_k_idx])
-
-        cols_indptr.append(len(data))
-
-        W_sparse = sparse.csc_matrix((data, rows_indices, cols_indptr),
-                                     shape=(len(self._users), len(self._users)), dtype=np.float32).tocsr()
+        # self._similarity_matrix = np.empty((len(self._users), len(self._users)))
+        #
+        # self.process_similarity(self._similarity)
+        #
+        # data, rows_indices, cols_indptr = [], [], []
+        #
+        # column_row_index = np.arange(len(self._users), dtype=np.int32)
+        #
+        # for user_idx in range(len(self._users)):
+        #     cols_indptr.append(len(data))
+        #     column_data = self._similarity_matrix[:, user_idx]
+        #
+        #     non_zero_data = column_data != 0
+        #
+        #     idx_sorted = np.argsort(column_data[non_zero_data])  # sort by column
+        #     top_k_idx = idx_sorted[-self._num_neighbors:]
+        #
+        #     data.extend(column_data[non_zero_data][top_k_idx])
+        #     rows_indices.extend(column_row_index[non_zero_data][top_k_idx])
+        #
+        # cols_indptr.append(len(data))
+        #
+        # W_sparse = sparse.csc_matrix((data, rows_indices, cols_indptr),
+        #                              shape=(len(self._users), len(self._users)), dtype=np.float32).tocsr()
         self._preds = W_sparse.dot(self._URM).toarray()
 
         # for the user-based algorithm we use the User Activity grouping
@@ -232,7 +278,7 @@ class Similarity(object):
         else:
             raise ValueError(f"Post processing: {self._post_processing} not recognized. Try with post_processing: ('value', 'parity')")
 
-        del self._similarity_matrix
+        # del self._similarity_matrix
 
 
     def process_similarity(self, similarity):
