@@ -27,7 +27,7 @@ experiment:
         validation_metric: nDCGRendle2020@20
         hyper_opt_alg: grid
       neighbors: [ 50, 100 ]
-      similarity: [ cosine, jaccard, euclidean ]
+      similarity: [ jaccard, cosine, euclidean ]
       sampling_strategy: [ no_sampling ]
       n_hash: [ 2, 3, 4, 5 ]
       n_tables: [ 1,2,4,8 ]
