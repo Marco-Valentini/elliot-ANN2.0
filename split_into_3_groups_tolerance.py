@@ -51,7 +51,7 @@ group_to_items = item_frequencies.groupby('group')['ItemID'].apply(list).to_dict
 with open(f'data/{dataset}/group_popularity_2_to_items.json', 'w') as file:
     json.dump(group_to_items, file, indent=4)
 
-# group labelled as 1 contains the most popular/most active users (20%), the group labelled as 0 contains users and
+# group labelled as 1 contains the most popularitems (20%), the group labelled as 0 contains items and
 # items from the long-tail (80%)
 
 # do the same but for 3 groups
