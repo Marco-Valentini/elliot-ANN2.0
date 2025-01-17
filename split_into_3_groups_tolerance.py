@@ -13,7 +13,7 @@ import json
 
 # read the dataset
 parser = argparse.ArgumentParser(description="Run split user/item groups depending on quartiles.")
-parser.add_argument('--dataset', type=str, default='movielens_100k', choices=['movielens_100k', 'movielens_1m', 'amazon_books', 'lastfm_1k'])
+parser.add_argument('--dataset', type=str, default='movielens_100k', choices=['movielens_100k', 'movielens_1m', 'amazon_books', 'lastfm_1k', 'yelp'])
 args = parser.parse_args()
 # take the dataset from the input arguments
 dataset = args.dataset
