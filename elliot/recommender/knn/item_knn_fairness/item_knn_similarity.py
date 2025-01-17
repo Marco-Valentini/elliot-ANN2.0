@@ -228,6 +228,7 @@ class Similarity(object):
         # W_sparse = sparse.csc_matrix((data, rows_indices, cols_indptr),
         #                              shape=(len(self._data.items), len(self._data.items)), dtype=np.float32).tocsr()
         self._preds = self._URM.dot(W_sparse).toarray()
+        print("Predictions have been computed")
         # for the item-based algorithm we use the Item Popularity grouping
         if self._pre_post_processing == 'value':
             pass

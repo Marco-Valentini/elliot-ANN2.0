@@ -218,6 +218,7 @@ class Similarity(object):
         # W_sparse = sparse.csc_matrix((data, rows_indices, cols_indptr),
         #                              shape=(len(self._users), len(self._users)), dtype=np.float32).tocsr()
         self._preds = W_sparse.dot(self._URM).toarray()
+        print("Predictions have been computed")
 
         # for the user-based algorithm we use the User Activity grouping
         if self._pre_post_processing == 'value':

@@ -95,6 +95,7 @@ class LSHSimilarity(object):
 
     def process_similarity(self, similarity, sampling_strategy):
         # here we exploit the LSH object to compute the similarity
+        print("Preprocessing the data for the LSH index...")
         if similarity == "cosine":
             self._lsh_index.preprocess(self._URM.T.toarray())
         elif similarity == "euclidean":
@@ -106,7 +107,9 @@ class LSHSimilarity(object):
             raise ValueError("Compute Similarity: value for parameter 'similarity' not recognized."
                              f"\nAllowed values are: {self.supported_similarities}, {self.supported_dissimilarities}."
                              f"\nPassed value was {similarity}\n")
+        print("Preprocessing completed.")
         # now, based on the desired strategy, we compute the candidates for each item
+        print("Computing the results of the queries...")
         if similarity == "jaccard":
             query = self._item_profiles
         else:
@@ -128,6 +131,7 @@ class LSHSimilarity(object):
             raise ValueError("Compute Similarity: value for parameter 'sampling_strategy' not recognized."
                              f"\nAllowed values are: {self.supported_sampling_strategy}."
                              f"\nPassed value was {sampling_strategy}\n")
+        print("Queries completed.")
         # TODO: il sampling effettuato è con replacement, quindi abbiamo meno di k vicini -> pensare ad una soluzione
         # candidates is a dictionary {ItemID:[ID of candidate items to be similar]}, we need to use it to compute the similarity matrix
         if similarity == "cosine":
@@ -136,7 +140,7 @@ class LSHSimilarity(object):
             similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="euclidean", n_jobs=-1))
         elif similarity == "jaccard":
             similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="jaccard", n_jobs=-1))
-
+        print("Populating the similarity matrix...")
         if sampling_strategy == 'no_sampling':
             for item, neighbors in enumerate(candidates):
                 # Get the representation vector for the current item
@@ -154,6 +158,7 @@ class LSHSimilarity(object):
                 # Compute similarities only with the neighbors and Populate the similarity matrix
                 neighbor_vectors = self._URM.T[neighbors].toarray()
                 self._similarity_matrix[item, neighbors] = similarity_function(neighbor_vectors, item_vector).reshape(-1)
+        print("Similarity matrix populated.")
 
 
 

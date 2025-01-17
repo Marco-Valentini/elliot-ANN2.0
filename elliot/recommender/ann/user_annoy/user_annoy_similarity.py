@@ -79,13 +79,16 @@ class ANNOYSimilarity(object):
                              f"\nAllowed values are: {self.supported_dissimilarities}."
                              f"\nPassed value was {similarity}\n")
 
+        print("Building ANNOY index...")
         # insert the data into the index
         for i in range(len(self._data.users)):
             self._index_annoy.add_item(i, self._URM[i].toarray()[0])
 
         # build the index
         self._index_annoy.build(n_trees=self._n_trees, n_jobs=-1)
+        print("ANNOY index built.")
 
+        print("Retrieving neighbors from index...")
         # retrieve the data
         for user in range(len(self._data.users)):
             # find the k nearest neighbors and the relative distances
@@ -94,6 +97,7 @@ class ANNOYSimilarity(object):
                                                                      include_distances=True)
             # populate the similarity matrix, converting the distances into similarities
             self._similarity_matrix[user, neighbors] = 1 / (1 + np.array(distances))
+        print("Neighbors retrieved.")
 
 
     def get_user_recs(self, u, mask, k):

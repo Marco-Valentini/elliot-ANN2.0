@@ -77,8 +77,11 @@ class LSHfaissSimilarity(object):
         del self._similarity_matrix
 
     def process_similarity(self, similarity):
+        print("Building the index with FAISS LSH...")
         # here we exploit the FAISS IndexLSH object to compute the similarity
         self._index_faiss_lsh.add(self._URM.T.toarray())
+        print("Index built successfully!")
+        print("Retrieving the candidate neighbors")
         # retrieve the k-neighbors
         _, candidates = self._index_faiss_lsh.search(self._URM.T.toarray(), self._num_neighbors)
 
@@ -91,6 +94,7 @@ class LSHfaissSimilarity(object):
             raise ValueError("Compute Similarity: value for parameter 'similarity' not recognized."
                              f"\nAllowed values are: {self.supported_similarities}, {self.supported_dissimilarities}."
                              f"\nPassed value was {similarity}\n")
+        print("Computing the similarity matrix...")
         for item, neighbors in enumerate(candidates):
             # Get the representation vector for the current item
             item_vector = self._URM.T[item].toarray()
@@ -98,6 +102,7 @@ class LSHfaissSimilarity(object):
             # Compute similarities only with the neighbors and Populate the similarity matrix
             neighbor_vectors = self._URM.T[neighbors].toarray()
             self._similarity_matrix[item, neighbors] = similarity_function(neighbor_vectors, item_vector).reshape(-1)
+        print("Similarity matrix computed successfully!")
 
 
 
