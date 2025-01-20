@@ -16,6 +16,8 @@ from elliot.recommender.ann.item_ann_faiss_lsh.item_ann_faiss_lsh_similarity imp
 from elliot.recommender.base_recommender_model import BaseRecommenderModel
 from elliot.recommender.base_recommender_model import init_charger
 
+from tqdm import tqdm
+
 
 
 class ItemANNfaissLSH(RecMixin, BaseRecommenderModel):
@@ -62,7 +64,15 @@ class ItemANNfaissLSH(RecMixin, BaseRecommenderModel):
                                     implicit=self._implicit, nbits=self._nbits)
 
     def get_single_recommendation(self, mask, k, *args):
-        return {u: self._model.get_user_recs(u, mask, k) for u in self._ratings.keys()}
+        # return {u: self._model.get_user_recs(u, mask, k) for u in self._ratings.keys()}
+        recs = {}
+        for i in tqdm(range(0, len(self._ratings.keys()), 1024), desc="Processing batches",
+                      total=len(self._ratings.keys()) // 1024 + (1 if len(self._ratings.keys()) % 1024 != 0 else 0)):
+            batch = list(self._ratings.keys())[i:i + 1024]
+            mat = self._model.get_user_recs_batch(batch, mask, k)
+            proc_batch = dict(zip(batch, mat))
+            recs.update(proc_batch)
+        return recs
 
     def get_recommendations(self, k: int = 10):
         predictions_top_k_val = {}

@@ -3,6 +3,7 @@ import random
 import time
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
 from sklearn.metrics import pairwise_distances
+from tqdm import tqdm
 
 # implementation taken from `https://github.com/alfahaf/fair-nn`
 
@@ -47,7 +48,7 @@ class LSH:
         hvs = self._hash(
             X)  # apply the hashing, for each input data point we will get a new representation with reduced size (equal to k)
         self.tables = [{} for _ in range(self.L)]  # initialize the tables (minhashing)
-        for i in range(n):  # iterate over all the data points
+        for i in tqdm(range(n)):  # iterate over all the data points
             for j in range(self.L):  # iterate over all the tables
                 h = self._get_hash_value(hvs[i], j)  # takes the j-th element from the array contained in hvs[i]
                 self.tables[j].setdefault(h, set()).add(
@@ -64,12 +65,12 @@ class LSH:
         query_results = [set() for _ in range(len(Y))]  # for each query point we have a list of candidate items
 
         hvs = self._hash(Y)  # hash the query point (using the same hash functions using during preprocessing)
-        for j, q in enumerate(hvs):  # iterate over the hash values computed for the query
+        for j, q in enumerate(tqdm(hvs)):  # iterate over the hash values computed for the query
             buckets = [(i, self._get_hash_value(q, i)) for i in range(self.L)]
             query_buckets[
                 j] = buckets  # store the retrieved buckets for the j-th query point, for each table, the point is stored in a bucket
             s = 0  # initialize s?
-            elements = set()  # initialize a set of elements?
+            elements = set()  # initialize a set of elements
             for i, (table, bucket) in enumerate(buckets):
                 s += len(self.tables[table].get(bucket,
                                                 []))  # returns a list of candidate elements to be similar, otherwise an empty one (add its size to s)
@@ -110,19 +111,22 @@ class LSH:
 
     def weighted_uniform_query(self, Y, neighbors, runs=100):
         from bisect import bisect_right
+        print("Preprocessing the query...")
         query_buckets, query_size, elements, bucket_sizes, prefix_sums = self.preprocess_query(Y)
         results = {i: [] for i in range(len(Y))}
         # iterate over the query points
-        for j in range(len(Y)):
+        print("Retrieving the neighbors...")
+        for j in tqdm(range(len(Y))):
             # MODIFICATA QUESTA RIGA PER FAR RESTITUIRE SOLO K VICINI
             for _ in range(neighbors * runs):
-                if len(elements[j]) == 0:
+                if len(elements[j]) == 0:  # if no results have been found, return -1
                     results[j].append(-1)
                     continue
                 while True:
                     i = random.randrange(bucket_sizes[j])
                     pos = bisect_right(prefix_sums[j], i)
                     table, bucket = query_buckets[j][pos]
+                    # choose randomly a point until it is valid
                     p = random.choice(list(self.tables[table][bucket]))
                     if self.is_candidate_valid(Y[j], self.X[p]):
                         results[j].append(p)

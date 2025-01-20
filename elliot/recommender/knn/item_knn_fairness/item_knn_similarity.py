@@ -8,6 +8,7 @@ from sklearn.metrics import pairwise_distances
 from sklearn.preprocessing import normalize
 import similaripy as sim
 import random
+from operator import itemgetter
 
 
 class Similarity(object):
@@ -227,7 +228,7 @@ class Similarity(object):
         #
         # W_sparse = sparse.csc_matrix((data, rows_indices, cols_indptr),
         #                              shape=(len(self._data.items), len(self._data.items)), dtype=np.float32).tocsr()
-        self._preds = self._URM.dot(W_sparse).toarray()
+        self._preds = self._URM.dot(W_sparse)
         print("Predictions have been computed")
         # for the item-based algorithm we use the Item Popularity grouping
         if self._pre_post_processing == 'value':
@@ -341,6 +342,16 @@ class Similarity(object):
         real_indices = indices[partially_ordered_preds_indices]
         local_top_k = real_values.argsort()[::-1]
         return [(real_indices[item], real_values[item]) for item in local_top_k]
+
+    def get_user_recs_batch(self, u, mask, k):
+        u_index = itemgetter(*u)(self._data.public_users)
+        users_recs = np.where(mask[u_index, :], self._preds[u_index, :].toarray(), -np.inf)
+        index_ordered = np.argpartition(users_recs, -k, axis=1)[:, -k:]
+        value_ordered = np.take_along_axis(users_recs, index_ordered, axis=1)
+        local_top_k = np.take_along_axis(index_ordered, value_ordered.argsort(axis=1)[:, ::-1], axis=1)
+        value_sorted = np.take_along_axis(users_recs, local_top_k, axis=1)
+        mapper = np.vectorize(self._data.private_items.get)
+        return [[*zip(item, val)] for item, val in zip(mapper(local_top_k), value_sorted)]
 
 
     def get_model_state(self):

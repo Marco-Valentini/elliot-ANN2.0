@@ -7,6 +7,8 @@ from sklearn.metrics import pairwise_distances
 import similaripy as sim
 
 from elliot.recommender.ann.lsh import LSHBuilder
+from tqdm import tqdm
+from operator import itemgetter
 
 
 class LSHSimilarity(object):
@@ -89,7 +91,7 @@ class LSHSimilarity(object):
 
         W_sparse = sparse.csc_matrix((data, rows_indices, cols_indptr),
                                      shape=(len(self._data.items), len(self._data.items)), dtype=np.float32).tocsr()
-        self._preds = self._URM.dot(W_sparse).toarray()
+        self._preds = self._URM.dot(W_sparse)
 
         del self._similarity_matrix
 
@@ -142,7 +144,7 @@ class LSHSimilarity(object):
             similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="jaccard", n_jobs=-1))
         print("Populating the similarity matrix...")
         if sampling_strategy == 'no_sampling':
-            for item, neighbors in enumerate(candidates):
+            for item, neighbors in tqdm(enumerate(candidates)):
                 # Get the representation vector for the current item
                 item_vector = self._URM.T[item].toarray()
 
@@ -151,7 +153,7 @@ class LSHSimilarity(object):
                 self._similarity_matrix[item, list(neighbors)] = similarity_function(neighbor_vectors,
                                                                                      item_vector).reshape(-1)
         else:
-            for item, neighbors in candidates.items():
+            for item, neighbors in tqdm(candidates.items()):
                 # Get the representation vector for the current item
                 item_vector = self._URM.T[item].toarray()
 
@@ -180,6 +182,16 @@ class LSHSimilarity(object):
         real_indices = indices[partially_ordered_preds_indices]
         local_top_k = real_values.argsort()[::-1]
         return [(real_indices[item], real_values[item]) for item in local_top_k]
+
+    def get_user_recs_batch(self, u, mask, k):
+        u_index = itemgetter(*u)(self._data.public_users)
+        users_recs = np.where(mask[u_index, :], self._preds[u_index, :].toarray(), -np.inf)
+        index_ordered = np.argpartition(users_recs, -k, axis=1)[:, -k:]
+        value_ordered = np.take_along_axis(users_recs, index_ordered, axis=1)
+        local_top_k = np.take_along_axis(index_ordered, value_ordered.argsort(axis=1)[:, ::-1], axis=1)
+        value_sorted = np.take_along_axis(users_recs, local_top_k, axis=1)
+        mapper = np.vectorize(self._data.private_items.get)
+        return [[*zip(item, val)] for item, val in zip(mapper(local_top_k), value_sorted)]
 
     def get_model_state(self):
         saving_dict = {}

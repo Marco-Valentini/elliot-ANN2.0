@@ -7,6 +7,7 @@ from sklearn.metrics import pairwise_distances
 import similaripy as sim
 import random
 
+from operator import itemgetter
 
 class Similarity(object):
     """
@@ -69,6 +70,7 @@ class Similarity(object):
             self._private_users = self._data._old_private_users.copy()
             self._data._public_users = self._data._old_public_users.copy()
             self._public_users = self._data._old_public_users.copy()
+            self._data.public_users = self._data._old_public_users.copy()
             self._private_items = self._data._old_private_items.copy()
             self._public_items = self._data._old_public_items.copy()
             self._ratings = self._data._old_ratings.copy()
@@ -140,6 +142,7 @@ class Similarity(object):
             self._private_users = {u: user for u, user in self._private_users.items() if u in reduced}
             self._private_users = {u: user for u, user in enumerate(self._private_users.values())}
             self._public_users = {user: u for u, user in self._private_users.items()}
+            self._data.public_users = self._public_users.copy()
             # update the URM
             self._URM = self._URM[reduced, :]
             # update the unrated mask
@@ -217,7 +220,7 @@ class Similarity(object):
         #
         # W_sparse = sparse.csc_matrix((data, rows_indices, cols_indptr),
         #                              shape=(len(self._users), len(self._users)), dtype=np.float32).tocsr()
-        self._preds = W_sparse.dot(self._URM).toarray()
+        self._preds = W_sparse.dot(self._URM)
         print("Predictions have been computed")
 
         # for the user-based algorithm we use the User Activity grouping
@@ -323,6 +326,16 @@ class Similarity(object):
         real_indices = indices[partially_ordered_preds_indices]
         local_top_k = real_values.argsort()[::-1]
         return [(real_indices[item], real_values[item]) for item in local_top_k]
+
+    def get_user_recs_batch(self, u, mask, k):
+        u_index = itemgetter(*u)(self._data.public_users)
+        users_recs = np.where(mask[u_index, :], self._preds[u_index, :].toarray(), -np.inf)
+        index_ordered = np.argpartition(users_recs, -k, axis=1)[:, -k:]
+        value_ordered = np.take_along_axis(users_recs, index_ordered, axis=1)
+        local_top_k = np.take_along_axis(index_ordered, value_ordered.argsort(axis=1)[:, ::-1], axis=1)
+        value_sorted = np.take_along_axis(users_recs, local_top_k, axis=1)
+        mapper = np.vectorize(self._data.private_items.get)
+        return [[*zip(item, val)] for item, val in zip(mapper(local_top_k), value_sorted)]
 
     def get_model_state(self):
         saving_dict = {}
