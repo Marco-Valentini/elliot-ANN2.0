@@ -8,6 +8,7 @@ from operator import itemgetter
 
 from elliot.recommender.ann.lsh import LSHBuilder
 from tqdm import tqdm
+import similaripy as sim
 
 
 class LSHSimilarity(object):
@@ -144,25 +145,15 @@ class LSHSimilarity(object):
         elif similarity == "euclidean":
             similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="euclidean", n_jobs=-1))
         elif similarity == "jaccard":
-            similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="jaccard", n_jobs=-1))
+            similarity_function = lambda a,b : 1/(2 - sim.jaccard(b, a.T, self._num_neighbors, binary=True, verbose=False).toarray().reshape(-1))
         print("Populating the similarity matrix...")
         if sampling_strategy == 'no_sampling':
             for item, neighbors in enumerate(tqdm(candidates)):
-                # Get the representation vector for the current item
-                item_vector = self._URM[item].toarray()
-
-                # Compute similarities only with the neighbors and Populate the similarity matrix
-                neighbor_vectors = self._URM[list(neighbors)].toarray()
-                self._similarity_matrix[item, list(neighbors)] = similarity_function(neighbor_vectors,
-                                                                                     item_vector).reshape(-1)
+                self._similarity_matrix[item, list(neighbors)] = similarity_function(self._URM[list(neighbors)],
+                                                                                     self._URM[item]).reshape(-1)
         else:
             for item, neighbors in tqdm(candidates.items()):
-                # Get the representation vector for the current item
-                item_vector = self._URM[item].toarray()
-
-                # Compute similarities only with the neighbors and Populate the similarity matrix
-                neighbor_vectors = self._URM[neighbors].toarray()
-                self._similarity_matrix[item, neighbors] = similarity_function(neighbor_vectors, item_vector).reshape(-1)
+                self._similarity_matrix[item, neighbors] = similarity_function(self._URM[neighbors], self._URM[item]).reshape(-1)
         print("Similarity matrix populated.")
 
 

@@ -140,7 +140,7 @@ class LSHSimilarity(object):
         elif similarity == "euclidean":
             similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="euclidean", n_jobs=-1))
         elif similarity == "jaccard":
-            similarity_function = lambda a,b : 1/(2 - sim.jaccard(b, a.T, self._num_neighbors, binary=True).toarray().reshape(-1))
+            similarity_function = lambda a,b : 1/(2 - sim.jaccard(b, a.T, self._num_neighbors, binary=True, verbose=False).toarray().reshape(-1))
         print("Populating the similarity matrix...")
         if sampling_strategy == 'no_sampling':
             for item, neighbors in enumerate(tqdm(candidates)):
