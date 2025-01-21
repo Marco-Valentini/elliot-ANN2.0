@@ -62,13 +62,13 @@ for n in n_hash:
 
 # once generated the YAML files, we need to generate the sbatch files and run them on the cineca cluster
 template_sbatch = """#!/bin/bash
-#SBATCH --job-name=job_user_{n_hash}_{sampling_strategy}_{neighbors}
+#SBATCH --job-name=job_user_[{n_hash[0]}_{n_hash[1]}]_{sampling_strategy}_{neighbors}
 #SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=64GB
 #SBATCH --cpus-per-task=2
-#SBATCH --output=log_user_{n_hash}_{sampling_strategy}_{neighbors}.out
-#SBATCH --error=log_user_{n_hash}_{sampling_strategy}_{neighbors}.err
+#SBATCH --output=log_user_[{n_hash[0]}_{n_hash[1]}]_{sampling_strategy}_{neighbors}.out
+#SBATCH --error=log_user_[{n_hash[0]}_{n_hash[1]}]_{sampling_strategy}_{neighbors}.err
 #SBATCH --account={account_no}
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=m.valentini7@phd.poliba.it
