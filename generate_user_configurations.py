@@ -100,5 +100,5 @@ for n in n_hash:
             # submit the job
             subprocess.run(["sbatch", sbatch_file_path])
             # add a delay to avoid submitting too many jobs at the same time
-            time.sleep(60) # delay in seconds
+            time.sleep(5) # delay in seconds
 
