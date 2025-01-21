@@ -46,7 +46,7 @@ experiment:
         hyper_opt_alg: grid
       neighbors: 500 #[ 50, 100, 250, 500 ]
       similarity: [ cosine, jaccard, euclidean ]
-      sampling_strategy: no_sampling #[ no_sampling, uniform, weighted_uniform, opt, approx_degree, rank ]
+      sampling_strategy: opt #[ no_sampling, uniform, weighted_uniform, opt, approx_degree, rank ]
       n_hash: 5 #[ 2, 3, 4, 5 ]
       n_tables: 8 #[ 1,2,4,8 ]
 #    ItemANNfaissLSH:
