@@ -7,6 +7,7 @@ from sklearn.metrics import pairwise_distances
 from operator import itemgetter
 
 from elliot.recommender.ann.lsh import LSHBuilder
+from tqdm import tqdm
 
 
 class LSHSimilarity(object):
@@ -146,7 +147,7 @@ class LSHSimilarity(object):
             similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="jaccard", n_jobs=-1))
         print("Populating the similarity matrix...")
         if sampling_strategy == 'no_sampling':
-            for item, neighbors in enumerate(candidates):
+            for item, neighbors in enumerate(tqdm(candidates)):
                 # Get the representation vector for the current item
                 item_vector = self._URM[item].toarray()
 
@@ -155,7 +156,7 @@ class LSHSimilarity(object):
                 self._similarity_matrix[item, list(neighbors)] = similarity_function(neighbor_vectors,
                                                                                      item_vector).reshape(-1)
         else:
-            for item, neighbors in candidates.items():
+            for item, neighbors in tqdm(candidates.items()):
                 # Get the representation vector for the current item
                 item_vector = self._URM[item].toarray()
 

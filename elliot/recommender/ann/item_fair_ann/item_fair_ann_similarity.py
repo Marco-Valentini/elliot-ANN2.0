@@ -126,7 +126,6 @@ class LSHSimilarity(object):
             candidates = self._lsh_index.approx_degree_query(Y=query, neighbors=self._num_neighbors, runs=1)
         elif sampling_strategy == 'rank':
             candidates = self._lsh_index.rank_query_simulate(Y=query, neighbors=self._num_neighbors, runs=1)
-        # TODO aggiungere sampling_strategy == 'no_sampling'/'all' dove prendiamo tutti
         elif sampling_strategy == 'no_sampling':
             _, _, candidates, _, _ = self._lsh_index.preprocess_query(query)
         else:
@@ -141,25 +140,16 @@ class LSHSimilarity(object):
         elif similarity == "euclidean":
             similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="euclidean", n_jobs=-1))
         elif similarity == "jaccard":
-            similarity_function = lambda a, b: 1 / (1 + pairwise_distances(a,b, metric="jaccard", n_jobs=-1))
+            similarity_function = lambda a,b : 1/(2 - sim.jaccard(b, a.T, self._num_neighbors, binary=True).toarray().reshape(-1))
         print("Populating the similarity matrix...")
         if sampling_strategy == 'no_sampling':
-            for item, neighbors in tqdm(enumerate(candidates)):
-                # Get the representation vector for the current item
-                item_vector = self._URM.T[item].toarray()
-
-                # Compute similarities only with the neighbors and Populate the similarity matrix
-                neighbor_vectors = self._URM.T[list(neighbors)].toarray()
-                self._similarity_matrix[item, list(neighbors)] = similarity_function(neighbor_vectors,
-                                                                                     item_vector).reshape(-1)
+            for item, neighbors in enumerate(tqdm(candidates)):
+                # compute the similarity matrix for the identified neighbors
+                self._similarity_matrix[item, list(neighbors)] = similarity_function(self._URM.T[list(neighbors)],
+                                                                                     self._URM.T[item]).reshape(-1)
         else:
             for item, neighbors in tqdm(candidates.items()):
-                # Get the representation vector for the current item
-                item_vector = self._URM.T[item].toarray()
-
-                # Compute similarities only with the neighbors and Populate the similarity matrix
-                neighbor_vectors = self._URM.T[neighbors].toarray()
-                self._similarity_matrix[item, neighbors] = similarity_function(neighbor_vectors, item_vector).reshape(-1)
+                self._similarity_matrix[item, neighbors] = similarity_function(self._URM.T[neighbors], self._URM.T[item]).reshape(-1)
         print("Similarity matrix populated.")
 
 
