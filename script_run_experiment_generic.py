@@ -8,19 +8,23 @@ warnings.filterwarnings("ignore")
 
 # read the dataset
 parser = argparse.ArgumentParser(description="Run a script to run experiments on a generic dataset.")
-parser.add_argument('--type', type=str, default='item', choices=['item', 'user'])
-parser.add_argument('--version', type=str, default='1a')
-parser.add_argument('--dataset', type=str, default='amazon_books', choices=['amazon_books', 'lastfm_1k', 'yelp', 'movielens_100k', 'movielens_1m'])
+parser.add_argument('--type', type=str)
+parser.add_argument('--n_hash', type=str)
+parser.add_argument('--sampling', type=str)
+parser.add_argument('--neighbors', type=int)
 args = parser.parse_args()
 
 # take the type of experiment the input arguments
-type = args.type
+n = args.n_hash
 
 # take the version of the experiment from the input arguments
-version = args.version
+s = args.sampling
 
 # take the dataset from the input arguments
-dataset = args.dataset
+k = args.neighbors
 
-print(f"Done! We are now starting the Fair ANN Elliot's experiment with {dataset} dataset")
-run_experiment(f"config_run_experiments/{type}_experiment_{dataset}_{version}.yml")
+# take the type of experiment from the input arguments
+t = args.type
+
+print(f"Done! We are now starting the Fair ANN Elliot's experiment with YELP dataset")
+run_experiment(f"config_run_experiments_yelp/{t}_experiment_yelp_n_hash={n}_sampling={s}_neighbors={k}.yml")

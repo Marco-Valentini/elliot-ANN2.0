@@ -11,10 +11,10 @@ experiment:
         user_group_file: ../data/yelp/group_tolerance_2_to_users.json
         item_group_file: ../data/yelp/group_popularity_2_to_items.json
   top_k: 50
-  path_output_rec_result: ./results/yelp_item/recs/
-  path_output_rec_weight: ./results/yelp_item/weights/
-  path_output_rec_performance: ./results/yelp_item/performance/
-  path_log_folder: ../log/yelp_item/
+  path_output_rec_result: ./results/yelp_user/recs/
+  path_output_rec_weight: ./results/yelp_user/weights/
+  path_output_rec_performance: ./results/yelp_user/performance/
+  path_log_folder: ../log/yelp_user/
   evaluation:
     cutoffs: 20
     simple_metrics: [ nDCGRendle2020 ]
@@ -29,7 +29,7 @@ experiment:
       meta:
         verbose: True
         save_recs: True
-    ItemKNN:
+    UserKNN:
       meta:
         verbose: True
         save_recs: True
@@ -38,18 +38,18 @@ experiment:
       neighbors: [ 50, 100, 250, 500 ]
       similarity: [ cosine, jaccard, euclidean ]
       implementation: standard
-    ItemFairANN:
-      meta:
-        verbose: True
-        save_recs: True
-        validation_metric: nDCGRendle2020@20
-        hyper_opt_alg: grid
-      neighbors: [ 50, 100, 250, 500 ]
-      similarity: [ cosine, jaccard, euclidean ]
-      sampling_strategy: opt[ no_sampling, uniform, weighted_uniform, opt, approx_degree, rank ]
-      n_hash: [ 2, 3, 4, 5 ]
-      n_tables: [ 1,2,4,8 ]
-    ItemANNfaissLSH:
+#    UserFairANN:
+#      meta:
+#        verbose: True
+#        save_recs: True
+#        validation_metric: nDCGRendle2020@20
+#        hyper_opt_alg: grid
+#      neighbors: [ 50, 100, 250, 500 ]
+#      similarity: [ cosine, jaccard, euclidean ]
+#      sampling_strategy: [ no_sampling, uniform, weighted_uniform, opt, approx_degree, rank ]
+#      n_hash: [ 2, 3, 4, 5 ]
+#      n_tables: [ 1,2,4,8 ]
+    UserANNfaissLSH:
       meta:
         verbose: True
         save_recs: True
@@ -57,8 +57,8 @@ experiment:
         hyper_opt_alg: grid
       neighbors: [ 50, 100, 250, 500 ]
       similarity: cosine
-      nbits: [ 2, 4, 6, 8 ]
-    ItemANNOY:
+      nbits: [2, 4, 6, 8]
+    UserANNOY:
       meta:
         verbose: True
         save_recs: True
@@ -66,9 +66,9 @@ experiment:
         hyper_opt_alg: grid
       neighbors: [ 50, 100, 250, 500 ]
       similarity: [ angular, euclidean, hamming ] # hamming distance is the most similar to the jaccard one
-      n_trees: [ 1,3,5 ]
-      search_k: [ -1,5,10 ]
-    ItemKNNfairness:
+      n_trees: [1,3,5]
+      search_k: [-1,5,10]
+    UserKNNfairness:
       meta:
         verbose: True
         save_recs: True
@@ -76,4 +76,4 @@ experiment:
         validation_metric: nDCGRendle2020@20
       neighbors: [ 50, 100, 250, 500 ]
       similarity: [ cosine, jaccard, euclidean ]
-      pre_post_processing: [ parity, interactions, items ]
+      pre_post_processing: [ parity, interactions, users ]
