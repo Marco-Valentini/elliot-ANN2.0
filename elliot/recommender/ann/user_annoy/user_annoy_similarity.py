@@ -5,6 +5,7 @@ from scipy import sparse
 
 from annoy import AnnoyIndex
 from operator import itemgetter
+from tqdm import tqdm
 
 class ANNOYSimilarity(object):
     """
@@ -83,7 +84,7 @@ class ANNOYSimilarity(object):
 
         print("Building ANNOY index...")
         # insert the data into the index
-        for i in range(len(self._data.users)):
+        for i in tqdm(range(len(self._data.users))):
             self._index_annoy.add_item(i, self._URM[i].toarray()[0])
 
         # build the index
@@ -92,7 +93,7 @@ class ANNOYSimilarity(object):
 
         print("Retrieving neighbors from index...")
         # retrieve the data
-        for user in range(len(self._data.users)):
+        for user in tqdm(range(len(self._data.users))):
             # find the k nearest neighbors and the relative distances
             neighbors, distances = self._index_annoy.get_nns_by_item(user, self._num_neighbors,
                                                                      search_k=self._search_k,

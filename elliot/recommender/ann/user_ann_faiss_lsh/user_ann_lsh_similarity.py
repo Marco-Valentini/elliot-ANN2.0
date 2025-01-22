@@ -7,6 +7,7 @@ from sklearn.metrics import pairwise_distances
 from operator import itemgetter
 
 import faiss # Facebook AI Similarity Search library that contains IndexLSH
+from tqdm import tqdm
 
 class LSHfaissSimilarity(object):
     """
@@ -95,13 +96,8 @@ class LSHfaissSimilarity(object):
                              f"\nAllowed values are: {self.supported_similarities}, {self.supported_dissimilarities}."
                              f"\nPassed value was {similarity}\n")
         print("Computing the similarity matrix...")
-        for user, neighbors in enumerate(candidates):
-            # Get the representation vector for the current item
-            user_vector = self._URM[user].toarray()
-
-            # Compute similarities only with the neighbors and Populate the similarity matrix
-            neighbor_vectors = self._URM[neighbors].toarray()
-            self._similarity_matrix[user, neighbors] = similarity_function(neighbor_vectors, user_vector).reshape(-1)
+        for user, neighbors in enumerate(tqdm(candidates)):
+            self._similarity_matrix[user, neighbors] = similarity_function(self._URM[neighbors], self._URM[user]).reshape(-1)
         print("Similarity matrix computed successfully!")
 
     def get_user_recs(self, u, mask, k):

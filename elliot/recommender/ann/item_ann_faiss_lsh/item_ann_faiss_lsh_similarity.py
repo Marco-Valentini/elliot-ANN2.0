@@ -4,9 +4,10 @@ import numpy as np
 from scipy import sparse
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
 from sklearn.metrics import pairwise_distances
+from operator import itemgetter
 
 import faiss # Facebook AI Similarity Search library that contains IndexLSH
-from operator import itemgetter
+from tqdm import tqdm
 
 class LSHfaissSimilarity(object):
     """
@@ -96,13 +97,8 @@ class LSHfaissSimilarity(object):
                              f"\nAllowed values are: {self.supported_similarities}, {self.supported_dissimilarities}."
                              f"\nPassed value was {similarity}\n")
         print("Computing the similarity matrix...")
-        for item, neighbors in enumerate(candidates):
-            # Get the representation vector for the current item
-            item_vector = self._URM.T[item].toarray()
-
-            # Compute similarities only with the neighbors and Populate the similarity matrix
-            neighbor_vectors = self._URM.T[neighbors].toarray()
-            self._similarity_matrix[item, neighbors] = similarity_function(neighbor_vectors, item_vector).reshape(-1)
+        for item, neighbors in enumerate(tqdm(candidates)):
+            self._similarity_matrix[item, neighbors] = similarity_function(self._URM.T[neighbors], self._URM.T[item]).reshape(-1)
         print("Similarity matrix computed successfully!")
 
 

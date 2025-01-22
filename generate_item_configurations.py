@@ -90,7 +90,7 @@ for n in n_hash:
             # generate sbatch script content
             sbatch_content = template_sbatch.format(n_hash=n, sampling_strategy=s, neighbors=k, account_no=account_no)
             # prepare the path for the sbatch file
-            sbatch_file_path = f"sbatch_files_item/run_item_{i}.sbatch"
+            sbatch_file_path = f"sbatch_files_item/run_item_[{n[0]}_{n[1]}]_{s}_{k}.sbatch"
             i += 1
             # write the sbatch file
             with open(sbatch_file_path, "w") as f:
@@ -98,6 +98,6 @@ for n in n_hash:
             print(f"Generated sbatch file {sbatch_file_path}")
 
             # submit the job
-            subprocess.run(["sbatch", sbatch_file_path])
-            # add a delay to avoid submitting too many jobs at the same time
-            time.sleep(5) # delay in seconds
+            # subprocess.run(["sbatch", sbatch_file_path])
+            # # add a delay to avoid submitting too many jobs at the same time
+            # time.sleep(5) # delay in seconds

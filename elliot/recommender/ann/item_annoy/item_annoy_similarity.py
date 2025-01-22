@@ -8,6 +8,7 @@ from operator import itemgetter
 
 # Approximated Nearest Neighbor Search method used at Spotify
 from annoy import AnnoyIndex
+from tqdm import tqdm
 class ANNOYSimilarity(object):
     """
     ANN class to compute the similarity in an approximated way by exploiting LSH
@@ -85,7 +86,7 @@ class ANNOYSimilarity(object):
                              f"\nPassed value was {similarity}\n")
         print("Building ANNOY index...")
         # insert the data into the index
-        for i in range(len(self._data.items)):
+        for i in tqdm(range(len(self._data.items))):
             self._index_annoy.add_item(i, self._URM.T[i].toarray()[0])
 
         # build the index
@@ -94,7 +95,7 @@ class ANNOYSimilarity(object):
 
         print("Retrieving neighbors from index...")
         # retrieve the data
-        for item in range(len(self._data.items)):
+        for item in tqdm(range(len(self._data.items))):
             # find the k nearest neighbors and the relative distances
             neighbors, distances = self._index_annoy.get_nns_by_item(item, self._num_neighbors, search_k=self._search_k, include_distances=True)
             # populate the similarity matrix, converting the distances into similarities

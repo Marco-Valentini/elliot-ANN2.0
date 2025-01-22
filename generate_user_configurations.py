@@ -90,7 +90,7 @@ for n in n_hash:
             # generate sbatch script content
             sbatch_content = template_sbatch.format(n_hash=n, sampling_strategy=s, neighbors=k, account_no=account_no)
             # prepare the path for the sbatch file
-            sbatch_file_path = f"sbatch_files_user/run_user_{i}.sbatch"
+            sbatch_file_path = f"sbatch_files_user/run_user_[{n[0]}_{n[1]}]_{s}_{k}.sbatch"
             i += 1
             # write the sbatch file
             with open(sbatch_file_path, "w") as f:
