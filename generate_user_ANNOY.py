@@ -97,5 +97,5 @@ for k in neighbors:
 
             # submit the job
             subprocess.run(["sbatch", sbatch_file_path])
-            # # add a delay to avoid submitting too many jobs at the same time
+            # add a delay to avoid submitting too many jobs at the same time
             time.sleep(5) # delay in seconds
