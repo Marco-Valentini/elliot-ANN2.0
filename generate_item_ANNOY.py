@@ -95,7 +95,7 @@ for k in neighbors:
                 f.write(sbatch_content)
             print(f"Generated sbatch file {sbatch_file_path}")
 
-            # # submit the job
-            # subprocess.run(["sbatch", sbatch_file_path])
-            # # # add a delay to avoid submitting too many jobs at the same time
-            # time.sleep(5) # delay in seconds
+            # submit the job
+            subprocess.run(["sbatch", sbatch_file_path])
+            # # add a delay to avoid submitting too many jobs at the same time
+            time.sleep(5) # delay in seconds
