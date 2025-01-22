@@ -9,3 +9,5 @@ PyYAML
 scikit_learn
 faiss-cpu
 annoy
+Cython
+similaripy
