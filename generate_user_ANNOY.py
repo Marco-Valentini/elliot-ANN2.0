@@ -38,7 +38,7 @@ template = """experiment:
     simple_metrics: [ nDCGRendle2020 ]
   external_models_path: ../external/models/__init__.py
   models:
-      UserANNOY:
+    UserANNOY:
       meta:
         verbose: True
         save_recs: True

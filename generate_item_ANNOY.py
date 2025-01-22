@@ -36,18 +36,18 @@ template = """experiment:
   evaluation:
     cutoffs: 20
     simple_metrics: [ nDCGRendle2020 ]
-  external_models_path: ../external/models/__init__.py
+  external_models_path: ../external/models/__init__.py  
   models:
-      ItemANNOY:
+    ItemANNOY:
       meta:
         verbose: True
         save_recs: True
         validation_metric: nDCGRendle2020@20
         hyper_opt_alg: grid
-      neighbors: {neighbors}
+      neighbors: [ 50, 100, 250, 500 ]
       similarity: [ angular, euclidean, hamming ] # hamming distance is the most similar to the jaccard one
-      n_trees: {n_trees}
-      search_k: {search_k}
+      n_trees: [ 1,3,5 ]
+      search_k: [ -1,5,10 ]    
 """
 
 neighbors =  [ 50, 100, 250, 500 ]
@@ -95,7 +95,7 @@ for k in neighbors:
                 f.write(sbatch_content)
             print(f"Generated sbatch file {sbatch_file_path}")
 
-            # submit the job
-            subprocess.run(["sbatch", sbatch_file_path])
-            # # add a delay to avoid submitting too many jobs at the same time
-            time.sleep(5) # delay in seconds
+            # # submit the job
+            # subprocess.run(["sbatch", sbatch_file_path])
+            # # # add a delay to avoid submitting too many jobs at the same time
+            # time.sleep(5) # delay in seconds
