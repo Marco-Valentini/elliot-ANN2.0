@@ -67,8 +67,8 @@ template_sbatch = """#!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --mem=32GB
 #SBATCH --cpus-per-task=1
-#SBATCH --output=user_out/log_annoy_user_n={neighbors}_t={n_trees}_k={search_k}.out
-#SBATCH --error=user_err/log_annoy_user_n={neighbors}_t={n_trees}_k={search_k}.err
+#SBATCH --output=user_annoy_out/log_annoy_user_n={neighbors}_t={n_trees}_k={search_k}.out
+#SBATCH --error=user_annoy_err/log_annoy_user_n={neighbors}_t={n_trees}_k={search_k}.err
 #SBATCH --account={account_no}
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=m.valentini7@phd.poliba.it
