@@ -76,6 +76,7 @@ template_sbatch = """#!/bin/bash
 #SBATCH --partition=boost_usr_prod
 #SBATCH --qos=normal
 
+cd $WORK/elliot-ANN2.0/
 module load anaconda3
 source activate elliot_venv
 python script_run_experiment_generic.py --type item --n_hash '{n_hash}' --sampling {sampling_strategy} --neighbors {neighbors}
