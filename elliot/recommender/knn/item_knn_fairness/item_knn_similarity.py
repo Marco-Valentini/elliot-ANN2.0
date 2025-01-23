@@ -8,6 +8,7 @@ from sklearn.metrics import pairwise_distances
 from sklearn.preprocessing import normalize
 import similaripy as sim
 import random
+from copy import deepcopy
 from operator import itemgetter
 
 
@@ -57,28 +58,32 @@ class Similarity(object):
         if not hasattr(self._data, 'old_allunrated_mask'):
             # save the original one
             self._data.old_allunrated_mask = self._data.allunrated_mask.copy()
-            self._data.old_users = self._data.users.copy()
-            self._data._old_users = self._users.copy()
+            # self._data.old_users = self._data.users.copy()
+            # self._data._old_users = self._users.copy()
             self._data.old_items = self._data.items.copy()
             self._data._old_items = self._items.copy()
-            self._data._old_private_users = self._private_users.copy()
-            self._data._old_public_users = self._public_users.copy()
+            # self._data._old_private_users = self._private_users.copy()
+            # self._data._old_public_users = self._public_users.copy()
             self._data._old_private_items = self._private_items.copy()
             self._data._old_public_items = self._public_items.copy()
-            self._data._old_ratings = self._ratings.copy()
-
+            # self._data._old_ratings = self._ratings.copy()
+            self._data._old_URM = self._URM.copy()
         else:
             # restore to the original one
             self._data.allunrated_mask = self._data.old_allunrated_mask.copy()
             self._data.items = self._data.old_items.copy()
             self._items = self._data._old_items.copy()
-            self._data.users = self._data.old_users.copy()
-            self._users = self._data._old_users.copy()
+            # self._data.users = self._data.old_users.copy()
+            # self._users = self._data._old_users.copy()
             self._private_items = self._data._old_private_items.copy()
             self._public_items = self._data._old_public_items.copy()
-            self._private_users = self._data._old_private_users.copy()
-            self._public_users = self._data._old_public_users.copy()
-            self._ratings = self._data._old_ratings.copy()
+            # self._private_users = self._data._old_private_users.copy()
+            # self._data._public_users = self._data._old_public_users.copy()
+            # self._public_users = self._data._old_public_users.copy()
+            # self._data.public_users = self._data._old_public_users.copy()
+            # self._ratings = self._data._old_ratings.copy()
+            self._URM = self._data._old_URM.copy()
+
 
         if self._pre_post_processing == None:
             pass
@@ -383,11 +388,11 @@ class Similarity(object):
         self._data.allunrated_mask = self._data.old_allunrated_mask.copy()
         self._data.items = self._data.old_items.copy()
         self._items = self._data._old_items.copy()
-        self._data.users = self._data.old_users.copy()
-        self._users = self._data._old_users.copy()
+        # self._data.users = self._data.old_users.copy()
+        # self._users = self._data._old_users.copy()
         self._private_items = self._data._old_private_items.copy()
         self._public_items = self._data._old_public_items.copy()
-        self._private_users = self._data._old_private_users.copy()
-        self._public_users = self._data._old_public_users.copy()
-        self._ratings = self._data._old_ratings.copy()
+        # self._private_users = self._data._old_private_users.copy()
+        # self._public_users = self._data._old_public_users.copy()
+        # self._ratings = self._data._old_ratings.copy()
 
