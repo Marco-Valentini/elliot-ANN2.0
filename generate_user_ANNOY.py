@@ -50,9 +50,9 @@ template = """experiment:
       search_k: {search_k}
 """
 
-neighbors =  [ 50, 100, 250, 500 ]
-n_trees = [ 1,3,5 ]
-search_k = [ -1,5,10 ]
+neighbors = [50, 100, 250, 500]
+n_trees = [1, 3, 5]
+search_k = [-1, 5, 10]
 
 for k in neighbors:
     for t in n_trees:
@@ -98,4 +98,4 @@ for k in neighbors:
             # submit the job
             subprocess.run(["sbatch", sbatch_file_path])
             # add a delay to avoid submitting too many jobs at the same time
-            time.sleep(5) # delay in seconds
+            time.sleep(5)  # delay in seconds
