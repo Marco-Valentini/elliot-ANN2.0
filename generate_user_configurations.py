@@ -65,7 +65,7 @@ template_sbatch = """#!/bin/bash
 #SBATCH --job-name=job_user_[{n_hash[0]}_{n_hash[1]}]_{sampling_strategy}_{neighbors}
 #SBATCH --time=24:00:00
 #SBATCH --nodes=1
-#SBATCH --mem=128GB
+#SBATCH --mem=256GB
 #SBATCH --cpus-per-task=2
 #SBATCH --output=user_out/log_user_[{n_hash[0]}_{n_hash[1]}]_{sampling_strategy}_{neighbors}.out
 #SBATCH --error=user_err/log_user_[{n_hash[0]}_{n_hash[1]}]_{sampling_strategy}_{neighbors}.err
@@ -81,7 +81,6 @@ module load anaconda3
 source activate elliot_venv
 python script_run_experiment_generic.py --type user --n_hash '{n_hash}' --sampling {sampling_strategy} --neighbors {neighbors}
 """
-i = 1
 # create the directory for the sbatch files
 os.makedirs("sbatch_files_user", exist_ok=True)
 # submit a job for each configuration
@@ -92,7 +91,6 @@ for n in n_hash:
             sbatch_content = template_sbatch.format(n_hash=n, sampling_strategy=s, neighbors=k, account_no=account_no)
             # prepare the path for the sbatch file
             sbatch_file_path = f"sbatch_files_user/run_user_[{n[0]}_{n[1]}]_{s}_{k}.sbatch"
-            i += 1
             # write the sbatch file
             with open(sbatch_file_path, "w") as f:
                 f.write(sbatch_content)
