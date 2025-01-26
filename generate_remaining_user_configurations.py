@@ -84,7 +84,7 @@ template_sbatch = """#!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --mem=256GB
 #SBATCH --cpus-per-task=2
-#SBATCH --output=user_remaining__out/log_user_{similarity}_{sampling_strategy}_{n_hash}_{n_tables}.out
+#SBATCH --output=user_remaining_out/log_user_{similarity}_{sampling_strategy}_{n_hash}_{n_tables}.out
 #SBATCH --error=user_remaining_err/log_user_{similarity}_{sampling_strategy}_{n_hash}_{n_tables}.err
 #SBATCH --account={account_no}
 #SBATCH --mail-type=END,FAIL
@@ -96,7 +96,7 @@ template_sbatch = """#!/bin/bash
 cd $WORK/elliot-ANN2.0/
 module load anaconda3
 source activate elliot_venv
-python script_run_remaining_experiment_generic.py --type remaining_user --similarity '{similarity}' --sampling {sampling_strategy} --n_hash {n_hash} --n_tables {n_tables}"""
+python script_run_remaining_experiment_generic.py --type remaining_user --similarity {similarity} --sampling {sampling_strategy} --n_hash '{n_hash}' --n_tables '{n_tables}'"""
 
 # create the directory for the sbatch files
 os.makedirs("remaining_sbatch_files_user", exist_ok=True)
