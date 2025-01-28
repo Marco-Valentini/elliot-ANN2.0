@@ -5,6 +5,8 @@ from elliot.run import run_experiment
 #
 # run_experiment("config_compute_metrics/evaluate_item_movielens_1m.yml")
 
-run_experiment("config_compute_metrics/evaluate_item_lastfm_1k.yml")
+# run_experiment("config_compute_metrics/evaluate_item_lastfm_1k.yml")
 
 # run_experiment("config_compute_metrics/evaluate_item_amazon_books.yml")
+
+run_experiment("config_compute_metrics/evaluate_item_yelp.yml")
