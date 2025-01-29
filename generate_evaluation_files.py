@@ -23,36 +23,36 @@ account_no = args.account
 
 item_recs_path = "results/yelp_item/recs/"
 user_recs_path = "results/yelp_user/recs/"
-
-# find how many files are there in the item recommendation folder
-item_files = os.listdir(item_recs_path)
-print(f"Total item files: {len(item_files)}")
-
-# find how many files are there in the user recommendation folder
-user_files = os.listdir(user_recs_path)
-print(f"Total user files: {len(user_files)}")
-
-# find the number of folder to be created
-n_folders = ceil(len(item_files) / 30)
-
-# create the folders into the item folder
-for i in range(n_folders):
-    os.makedirs(f"results/yelp_item/recs_{i+1}", exist_ok=True)
-
-# create the folders into the user folder
-for i in range(n_folders):
-    os.makedirs(f"results/yelp_user/recs_{i+1}", exist_ok=True)
-
-# move the files into the folders
-for i, file in enumerate(item_files):
-    folder_no = i // 30
-    shutil.move(f"{item_recs_path}{file}", f"results/yelp_item/recs_{folder_no+1}/{file}")
-
-for i, file in enumerate(user_files):
-    folder_no = i // 30
-    shutil.move(f"{user_recs_path}{file}", f"results/yelp_user/recs_{folder_no+1}/{file}")
-
-print("Done!")
+#
+# # find how many files are there in the item recommendation folder
+# item_files = os.listdir(item_recs_path)
+# print(f"Total item files: {len(item_files)}")
+#
+# # find how many files are there in the user recommendation folder
+# user_files = os.listdir(user_recs_path)
+# print(f"Total user files: {len(user_files)}")
+#
+# # find the number of folder to be created
+# n_folders = ceil(len(item_files) / 30)
+#
+# # create the folders into the item folder
+# for i in range(n_folders):
+#     os.makedirs(f"results/yelp_item/recs_{i+1}", exist_ok=True)
+#
+# # create the folders into the user folder
+# for i in range(n_folders):
+#     os.makedirs(f"results/yelp_user/recs_{i+1}", exist_ok=True)
+#
+# # move the files into the folders
+# for i, file in enumerate(item_files):
+#     folder_no = i // 30
+#     shutil.move(f"{item_recs_path}{file}", f"results/yelp_item/recs_{folder_no+1}/{file}")
+#
+# for i, file in enumerate(user_files):
+#     folder_no = i // 30
+#     shutil.move(f"{user_recs_path}{file}", f"results/yelp_user/recs_{folder_no+1}/{file}")
+#
+# print("Done!")
 
 template_item_yaml = """experiment:
   dataset: yelp
@@ -209,6 +209,7 @@ for i in range(n_folders+1):
     # write the sbatch file for the user
     with open(sbatch_file_path_user, "w") as f:
         f.write(sbatch_content_user)
+    print(f"Generated sbatch file {sbatch_file_path_user}")
 
     # submit the job
     subprocess.run(["sbatch", sbatch_file_path_item])
