@@ -178,7 +178,7 @@ template_sbatch_user = """#!/bin/bash
 #SBATCH --output=evaluate_out/evaluate_user_{i}.out
 #SBATCH --error=evaluate_err/evaluate_user_{i}.err
 #SBATCH --account={account_no}
-#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-type=END,Fcd AIL
 #SBATCH --mail-user=m.valentini7@phd.poliba.it
 #SBATCH --gres=gpu:0
 #SBATCH --partition=boost_usr_prod
@@ -196,17 +196,17 @@ os.makedirs("sbatch_files_evaluate_user", exist_ok=True)
 
 for i in range(n_folders+1):
     # generate sbatch script content for the item
-    sbatch_content_item = template_sbatch_item.format(i=i, account_no=account_no)
+    sbatch_content_item = template_sbatch_item.format(i=i+1, account_no=account_no)
     # prepare the path for the sbatch file for the item
-    sbatch_file_path_item = f"sbatch_files_evaluate_item/run_evaluate_item_{i}.sbatch"
+    sbatch_file_path_item = f"sbatch_files_evaluate_item/run_evaluate_item_{i+1}.sbatch"
     # write the sbatch file for the item
     with open(sbatch_file_path_item, "w") as f:
         f.write(sbatch_content_item)
     print(f"Generated sbatch file {sbatch_file_path_item}")
     # generate sbatch script content for the user
-    sbatch_content_user = template_sbatch_user.format(i=i, account_no=account_no)
+    sbatch_content_user = template_sbatch_user.format(i=i+1, account_no=account_no)
     # prepare the path for the sbatch file for the user
-    sbatch_file_path_user = f"sbatch_files_evaluate_user/run_evaluate_user_{i}.sbatch"
+    sbatch_file_path_user = f"sbatch_files_evaluate_user/run_evaluate_user_{i+1}.sbatch"
     # write the sbatch file for the user
     with open(sbatch_file_path_user, "w") as f:
         f.write(sbatch_content_user)
