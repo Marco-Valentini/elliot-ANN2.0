@@ -136,6 +136,7 @@ template_user_yaml = """experiment:
     RecommendationFolder:
         folder: ./results/yelp_user/recs_{i}/"""
 
+n_folders = 45
 # create and save the configuration files
 for i in range(1, n_folders+1):
     with open(f"config_compute_metrics/evaluate_item_yelp_{i}.yml", "w") as f:
