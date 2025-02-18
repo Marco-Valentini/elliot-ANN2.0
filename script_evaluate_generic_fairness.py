@@ -17,4 +17,4 @@ t = args.type
 d = args.dataset
 
 print(f"Done! We are now starting the Fair ANN Elliot's experiment with {d} dataset")
-run_experiment(f"config_run_evaluate_oriented/evaluate_{t}_{d}.yml")
+run_experiment(f"config_evaluate_fairness_oriented/evaluate_{t}_{d}.yml")
