@@ -142,6 +142,8 @@ class Similarity(object):
             self._reduced = g1 + g2
             # update the URM
             self._old_URM = self._URM.copy()
+            self._old_users = self._users.copy()
+            self._users = sorted(itemgetter(*self._reduced)(self._data.private_users))
             self._URM = self._URM[self._reduced, :]
         else:
             raise ValueError("Pre-Post Processing: value for parameter 'pre_post_processing' not recognized."
@@ -266,6 +268,7 @@ class Similarity(object):
         # restore the original URM with all the users
         if self._pre_post_processing == 'users-resampling':
             self._URM = self._old_URM.copy()
+            self._users = self._old_users.copy()
 
 
     def process_similarity(self, similarity):
