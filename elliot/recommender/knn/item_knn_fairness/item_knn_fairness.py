@@ -18,6 +18,7 @@ from elliot.recommender.knn.item_knn_fairness.item_knn_similarity import Similar
 from elliot.recommender.base_recommender_model import init_charger
 
 from tqdm import tqdm
+from operator import itemgetter
 
 
 class ItemKNNfairness(RecMixin, BaseRecommenderModel):
@@ -57,17 +58,13 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
             ("_similarity", "similarity", "sim", "cosine", None, None),
             ("_implicit", "implicit", "bin", False, None, None),
             ("_pre_post_processing", "pre_post_processing", "preposp", None, None, None),
-            ("_asymmetric_alpha", "asymmetric_alpha", "asymalpha", False, None, lambda x: x if x else ""),
-            ("_tversky_alpha", "tversky_alpha", "tvalpha", False, None, lambda x: x if x else ""),
-            ("_tversky_beta", "tversky_beta", "tvbeta", False, None, lambda x: x if x else "")
         ]
         self.autoset_params()
 
         self._ratings = self._data.train_dict
 
         self._model = Similarity(data=self._data, num_neighbors=self._num_neighbors, similarity=self._similarity,
-                                 implicit=self._implicit, pre_post_processing=self._pre_post_processing, alpha=self._asymmetric_alpha,
-                                     tversky_alpha=self._tversky_alpha, tversky_beta=self._tversky_beta)
+                                 implicit=self._implicit, pre_post_processing=self._pre_post_processing)
 
     def get_single_recommendation(self, mask, k, *args):
         # return {u: self._model.get_user_recs(u, mask, k) for u in self._ratings.keys()}
@@ -103,9 +100,31 @@ class ItemKNNfairness(RecMixin, BaseRecommenderModel):
         self._model.initialize()
         end = time.time()
         print(f"The similarity computation has taken: {end - start}")
+        # if we are resampling users, modify the allunrated mask
+        if self._pre_post_processing == "users-resampling":
+            old_mask = self._data.allunrated_mask.copy()
+            self._data.allunrated_mask = self._data.allunrated_mask[self._model._reduced]
+            old_ratings = self._ratings.copy()
+            self._ratings = {k: v for k, v in self._ratings.items() if k in itemgetter(*self._model._reduced)(self._data.private_users)}
+            # keep the public IDs only for the retained users
+            old_users = self._data.users[:]
+            self._data.users = [u for u in self._data.users if u in itemgetter(*self._model._reduced)(self._data.private_users)]
+            self._num_users = len(self._data.users)
+            # save a copy for later
+            old_private_users = self._data.private_users.copy()
+            old_public_users = self._data.public_users.copy()
+            # create again from zero the mapping between private and public users
+            self._data.private_users = {k: v for k, v in enumerate(self._data.users)}
+            self._data.public_users = {v: k for k, v in self._data.private_users.items()}
 
         print(f"Transactions: {self._data.transactions}")
 
         self.evaluate()
-
-        self._model.restore_items_users()
+        # if we have resampled users, we need to restore the original mask
+        if self._pre_post_processing == "users-resampling":
+            self._data.allunrated_mask = old_mask.copy()
+            self._ratings = old_ratings
+            self._data.public_users = old_public_users.copy()
+            self._data.private_users = old_private_users.copy()
+            self._data.users = old_users[:]
+            self._num_users = len(self._data.users)
