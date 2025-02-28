@@ -124,6 +124,8 @@ class LSHSimilarity(object):
             candidates = self._lsh_index.weighted_uniform_query(Y=query, neighbors=self._num_neighbors, runs=1)
         elif sampling_strategy == 'approx_degree':
             candidates = self._lsh_index.approx_degree_query(Y=query, neighbors=self._num_neighbors, runs=1)
+        elif sampling_strategy == 'exact_degree':
+            candidates = self._lsh_index.exact_degree_query(Y=query, neighbors=self._num_neighbors, runs=1)
         elif sampling_strategy == 'rank':
             candidates = self._lsh_index.rank_query_simulate(Y=query, neighbors=self._num_neighbors, runs=1)
         elif sampling_strategy == 'no_sampling':

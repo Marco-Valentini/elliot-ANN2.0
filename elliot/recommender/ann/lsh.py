@@ -86,6 +86,10 @@ class LSH:
         return (query_buckets, query_size, query_results,
                 bucket_sizes,
                 prefix_sums)  # if we want to apply standard LSH minhashing/random projection, we can use the buckets contained here
+    # query_buckets contains the bucket in which the query point is contained for each table
+    # query_size contains the number of candidate items to be similar for each query point
+    # query_results the candidate items to be similar for each item
+
 
     def get_query_size(self, Y):
         _, query_size, _, _, _ = self.preprocess_query(Y)  # we preprocess the query
@@ -101,8 +105,8 @@ class LSH:
                     results[j].append(-1)
                     continue
                 while True:
-                    table, bucket = query_bucket[j][random.randrange(0, self.L)]
-                    elements = list(self.tables[table].get(bucket, [-1]))
+                    table, bucket = query_bucket[j][random.randrange(0, self.L)] # sample randomly one of the buckets containing the j-th query point
+                    elements = list(self.tables[table].get(bucket, [-1])) # retrieve a lists of elements containing the buckets
                     p = random.choice(elements)
                     if p != -1 and self.is_candidate_valid(Y[j], self.X[p]):
                         results[j].append(p)
@@ -123,9 +127,9 @@ class LSH:
                     results[j].append(-1)
                     continue
                 while True:
-                    i = random.randrange(bucket_sizes[j])
-                    pos = bisect_right(prefix_sums[j], i)
-                    table, bucket = query_buckets[j][pos]
+                    i = random.randrange(bucket_sizes[j]) # bucket size is the overall sum of the buckets containing the j-th query point
+                    pos = bisect_right(prefix_sums[j], i) # prefix sums contains the interval of each bucket containing the j-th query point
+                    table, bucket = query_buckets[j][pos] # pos will have higher probability for the bigger buckets to contain the i-th element
                     # choose randomly a point until it is valid
                     p = random.choice(list(self.tables[table][bucket]))
                     if self.is_candidate_valid(Y[j], self.X[p]):
@@ -134,7 +138,7 @@ class LSH:
         return results
 
     def opt(self, Y, neighbors, runs=100, runs_per_collision=True):
-        _, query_size, query_results, _, _ = self.preprocess_query(Y)
+        _, query_size, query_results, _, _ = self.preprocess_query(Y) # query size contains the number of candidates found for that query pont
         results = {i: [] for i in range(len(Y))}
 
         for j in range(len(Y)):
@@ -151,7 +155,7 @@ class LSH:
         return results
 
     def approx_degree_query(self, Y, neighbors, runs=100):
-        from bisect import bisect_right
+        from bisect import bisect_right # Rightmost index to insert, so list remains sorted is -> method to choose the bucket according to the size
         query_buckets, query_size, _, bucket_sizes, prefix_sums = self.preprocess_query(Y)
         results = {i: [] for i in range(len(Y))}
 
@@ -165,14 +169,42 @@ class LSH:
                 while True:
                     i = random.randrange(bucket_sizes[j])
                     pos = bisect_right(prefix_sums[j], i)
-                    table, bucket = query_buckets[j][pos]
-                    p = random.choice(list(self.tables[table][bucket]))
+                    table, bucket = query_buckets[j][pos] # choose the bucket with probability proportional to its size
+                    p = random.choice(list(self.tables[table][bucket])) # choose a point randomly from the bucket
                     # discard not within distance threshold
                     if not self.is_candidate_valid(Y[j], self.X[p]):
                         continue
                     # if p not in cache:
                     #    cache[p] = int(np.median([self.approx_degree(query_buckets[j], p) for _ in range(30)]))
-                    D = self.approx_degree(query_buckets[j], p)  # cache[p]
+                    D = self.approx_degree(query_buckets[j], p)  # compute the degree in an approximate way
+                    if random.randint(1, D) == D:  # output with probability 1/D
+                        results[j].append(p)
+                        break
+        return results
+
+    def exact_degree_query(self, Y, neighbors, runs=100):
+        from bisect import bisect_right # Rightmost index to insert, so list remains sorted is -> method to choose the bucket according to the size
+        query_buckets, query_size, _, bucket_sizes, prefix_sums = self.preprocess_query(Y)
+        results = {i: [] for i in range(len(Y))}
+
+        for j in range(len(Y)):
+            cache = {}
+            # MODIFICATA QUESTA RIGA PER FAR RESTITUIRE SOLO K VICINI
+            for _ in range(neighbors * runs):
+                if bucket_sizes[j] == 0:
+                    results[j].append(-1)
+                    continue
+                while True:
+                    i = random.randrange(bucket_sizes[j])
+                    pos = bisect_right(prefix_sums[j], i)
+                    table, bucket = query_buckets[j][pos] # choose the bucket with probability proportional to its size
+                    p = random.choice(list(self.tables[table][bucket])) # choose a point randomly from the bucket
+                    # discard not within distance threshold
+                    if not self.is_candidate_valid(Y[j], self.X[p]):
+                        continue
+                    # if p not in cache:
+                    #    cache[p] = int(np.median([self.approx_degree(query_buckets[j], p) for _ in range(30)]))
+                    D = self.exact_degree(query_buckets[j], p)  # compute the degree in an approximate way
                     if random.randint(1, D) == D:  # output with probability 1/D
                         results[j].append(p)
                         break
@@ -180,44 +212,44 @@ class LSH:
 
     def rank_query_simulate(self, Y, neighbors, runs=100):
         import heapq
-        n = len(self.X)
-        m = len(Y)
+        n = len(self.X) # n initialized to the number of data points in the space
+        m = len(Y) # initialized to the number of query points
         # ranks[i] is point with rank i
         # point_rank[j] is the rank of point j
-        ranks = list(range(n))
-        point_rank = [0 for _ in range(n)]
+        ranks = list(range(n)) # initialize the possible ranks
+        point_rank = [0 for _ in range(n)] # initialize all the ranks to 0
         random.shuffle(ranks)
 
         for rank, point in enumerate(ranks):
-            point_rank[point] = rank
+            point_rank[point] = rank # assigns a rank randomly to each data point
 
         results = {i: [] for i in range(m)}
 
         query_buckets, query_size, query_results, _, _ = self.preprocess_query(Y)
-
+        # iterate over each query point
         for j in range(m):
-            elements = list((point_rank[point], point) for point in query_results[j])
-            heapq.heapify(elements)
+            elements = list((point_rank[point], point) for point in query_results[j]) # extract only for the query results the related rank and the point
+            heapq.heapify(elements) # put the elements in increasing order of rank
             # MODIFICATA QUESTA RIGA PER FAR RESTITUIRE SOLO K VICINI
             for _ in range(neighbors * runs):
                 while True:
-                    rank, point = heapq.heappop(elements)
-                    while rank != point_rank[point]:
-                        rank, point = heapq.heappop(elements)
-                    if self.is_candidate_valid(Y[j], self.X[point]):
+                    rank, point = heapq.heappop(elements) # extract the top element from the heap
+                    while rank != point_rank[point]: # check if the rank is the same as the one assigned
+                        rank, point = heapq.heappop(elements) # continue popping elements until the rank is the same as the one assigned
+                    if self.is_candidate_valid(Y[j], self.X[point]): # we are taking as candidate the point that has the same rank as the one popped
                         break
 
                 results[j].append(point)
-
-                new_rank = random.randrange(rank, n)
-                q = ranks[new_rank]
-                ranks[rank] = q
+                # add a perturbation to the rank -> swap ranks of q and the retrieved point
+                new_rank = random.randrange(rank, n) # generate a new rank randomly
+                q = ranks[new_rank] # retrieve the point at the new sampled rank
+                ranks[rank] = q # assign the new point to the old rank (for which we have already returned the point)
                 ranks[new_rank] = point
                 point_rank[q] = rank
                 point_rank[point] = new_rank
 
-                heapq.heappush(elements, (new_rank, point))
-                if q in query_results[j]:
+                heapq.heappush(elements, (new_rank, point)) # add the point with its new rank to the heap (from the tail)
+                if q in query_results[j]: # if the point q is in the results, we insert it into the heap memory
                     heapq.heappush(elements, (rank, q))
         return results
 
