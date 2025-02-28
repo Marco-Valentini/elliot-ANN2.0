@@ -7,7 +7,7 @@ warnings.filterwarnings("ignore")
 
 # read the dataset
 parser = argparse.ArgumentParser(description="Run a script to run fairness-oriented experiments on a generic dataset.")
-parser.add_argument('config_path', type=str)
+parser.add_argument('--config_path', type=str)
 # parser.add_argument('--type', type=str)
 # parser.add_argument('--dataset', type=str)
 args = parser.parse_args()
