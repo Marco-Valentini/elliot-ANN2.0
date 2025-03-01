@@ -81,7 +81,7 @@ cd $WORK/elliot-ANN2.0/
 module load anaconda3
 eval "$(conda shell.bash hook)"
 source activate elliot_venv
-python script_run_generic.py --config_path config_run_exact_degree/item_experiment_yelp_n_hash={n_hash}_sampling={sampling_strategy}_neighbors={neighbors}.yml
+python script_run_generic.py --config_path 'config_run_exact_degree/item_experiment_yelp_n_hash={n_hash}_sampling={sampling_strategy}_neighbors={neighbors}.yml'
 """
 i = 1
 # create the directory for the sbatch files
