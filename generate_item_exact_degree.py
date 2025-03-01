@@ -80,7 +80,7 @@ template_sbatch = """#!/bin/bash
 cd $WORK/elliot-ANN2.0/
 module load anaconda3
 source activate elliot_venv
-python script_run_generic.py --config_path config_run_exact_degree/item_experiment_yelp_n_hash={n}_sampling={s}_neighbors={k}.yml
+python script_run_generic.py --config_path config_run_exact_degree/item_experiment_yelp_n_hash={n_hash}_sampling={sampling_strategy}_neighbors={neighbors}.yml
 """
 i = 1
 # create the directory for the sbatch files
