@@ -100,8 +100,8 @@ for n in n_hash:
             print(f"Generated sbatch file {sbatch_file_path}")
 
             # submit the job
-            # subprocess.run(["sbatch", sbatch_file_path])
-            # # add a delay to avoid submitting too many jobs at the same time
-            # time.sleep(5) # delay in seconds
+            subprocess.run(["sbatch", sbatch_file_path])
+            # add a delay to avoid submitting too many jobs at the same time
+            time.sleep(5) # delay in seconds
 
 print("All jobs submitted.")
