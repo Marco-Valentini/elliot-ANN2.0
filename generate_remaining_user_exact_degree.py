@@ -85,7 +85,7 @@ for similarity, n_hash, n_tables in remaining_configurations:
     # generate sbatch script content
     sbatch_content = template_sbatch.format(n_hash=n_hash, n_tables=n_tables, similarity=similarity, account_no=account_no)
     # prepare the path for the sbatch file
-    sbatch_file_path = f"sbatch_files_user_ed/run_user_[{n[0]}_{n[1]}]_{s}_{k}.sbatch"
+    sbatch_file_path = f"sbatch_files_user_ed/run_user_{similarity}_{n_hash}_{n_tables}.sbatch"
     # write the sbatch file
     with open(sbatch_file_path, "w") as f:
         f.write(sbatch_content)
