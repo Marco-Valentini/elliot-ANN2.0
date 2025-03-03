@@ -50,7 +50,7 @@ template = """experiment:
      n_hash: {n_hash}
      n_tables: {n_tables}"""
 
-remaining_configurations= [('jaccard', 2, 1), ('jaccard', 2, 8), ('jaccard', 3, 1), ('jaccard', 3, 8), ('euclidean', 3, 2), ('euclidean', 3, 4), ('cosine', 4, 8)]
+remaining_configurations= [('jaccard', 2, 2), ('cosine', 2, 4)]
 for similarity, n_hash, n_tables in remaining_configurations:
     with open(f"config_run_exact_degree/user_experiment_yelp_sim={similarity}_n_hash={n_hash}_n_tables={n_tables}_sampling=exact_degree_neighbors=500.yml", "w") as f:
         f.write(template.format(n_hash=n_hash, similarity=similarity, n_tables=n_tables))
