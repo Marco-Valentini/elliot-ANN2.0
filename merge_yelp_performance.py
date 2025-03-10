@@ -22,7 +22,7 @@ file_path_20 = glob.glob(f"results/{dataset}/performance_1/rec_cutoff_20*.tsv")[
 df_results_20 = pd.read_csv(file_path_20, sep='\t')
 
 # iterate over the folders
-for i in range(2, 9):
+for i in range(2, 11):
     file_path_1 = glob.glob(f"results/{dataset}/performance_{i}/rec_cutoff_1_*.tsv")[0]
     df_results_1 = pd.concat([df_results_1, pd.read_csv(file_path_1, sep='\t')], axis=0)
 
